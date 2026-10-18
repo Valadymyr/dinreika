@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ETEK в Україні — Дінрейка</title>
+<meta name="description" content="ETEK в Україні: ПЗВ тип B і для зарядних станцій, дифавтомати в один модуль, AFDD, автомати і ПЗІП. Готуємо перші постачання — залиш заявку.">
+<meta property="og:title" content="ETEK в Україні — модульна автоматика">
+<meta property="og:description" content="ПЗВ тип B, дифавтомати в один модуль, AFDD. Готуємо перші постачання — залиш заявку.">
+<meta property="og:image" content="assets/etek-board.webp">
+<link rel="icon" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
+<style>
+/* Шар за шаром, як щит: смуга проводів L · N · PE розділяє розділи; знімки програми в рамці корпусу. */
+:root{
+  --bg:#eef1f2; --panel:#ffffff; --ink:#121a20; --muted:#55626b; --line:#d3d9dc;
+  --signal:#f2c200; --signal-ink:#2a2200; --l:#8a5426; --n:#1c63c7; --pe:#3f8f2e;
+  --frame:#f8f9f7; --frame-edge:#c9cfd1;
+  --display:"Unbounded","Golos Text",system-ui,sans-serif; --body:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#11171b;--panel:#182127;--ink:#eef2f4;--muted:#9aa8b1;--line:#2b373f;--frame:#1d272e;--frame-edge:#35424a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11171b;--panel:#182127;--ink:#eef2f4;--muted:#9aa8b1;--line:#2b373f;--frame:#1d272e;--frame-edge:#35424a;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--body)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+a{color:inherit}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--display);line-height:1.12;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,5.4vw,62px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:clamp(26px,3.4vw,40px);font-weight:700}
+h3{font-size:19px;font-weight:500}
+p{margin:0}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:10px;font-weight:700;font-size:17px;text-decoration:none;border:2px solid var(--ink)}
+.btn.main{background:var(--signal);color:var(--signal-ink);border-color:var(--signal)}
+.btn.main:hover{filter:brightness(1.05)}
+.btn:focus-visible{outline:3px solid var(--n);outline-offset:3px}
+.wires{height:9px;background:linear-gradient(var(--l) 0 3px,var(--n) 3px 6px,var(--pe) 6px 9px)}
+.wires.pe{background:linear-gradient(var(--l) 0 3px,var(--n) 3px 6px,repeating-linear-gradient(90deg,var(--pe) 0 14px,#e3c234 14px 28px) 0 6px/100% 3px no-repeat)}
+
+header{padding-block:18px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:20px;text-decoration:none}
+.logo i{width:34px;height:34px;border-radius:8px;background:var(--signal);display:grid;place-items:center}
+.top nav{display:flex;gap:22px;font-size:15px}.top nav a{text-decoration:none;color:var(--muted)}.top nav a:hover{color:var(--ink)}
+@media (max-width:760px){.top nav{display:none}}
+
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:48px;align-items:center;padding-block:40px 64px}
+.hero .lead{font-size:20px;color:var(--muted);max-width:34em;margin-block:22px 30px}
+.hero .cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.hero .fine{font-size:14px;color:var(--muted);margin-top:16px}
+.enclosure{background:var(--frame);border:1px solid var(--frame-edge);border-radius:18px;padding:14px;box-shadow:0 30px 60px -30px rgba(10,20,30,.45)}
+.enclosure .door{border-radius:10px;overflow:hidden;border:1px solid var(--frame-edge);max-height:560px;background:#fff}
+.enclosure .door img{width:100%}
+@media (max-width:900px){.hero{grid-template-columns:1fr;gap:32px;padding-top:16px}}
+
+section{padding-block:72px}
+.kicker{font-size:15px;font-weight:600;color:var(--muted);margin-bottom:12px}
+.grid4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:36px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card p{color:var(--muted);font-size:16px}
+.card .shot{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;margin-top:auto;max-height:230px}
+@media (max-width:760px){.grid4{grid-template-columns:1fr}}
+
+.ai{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:start}
+.ai ul{padding-left:20px;margin:20px 0 0;color:var(--muted)}.ai li{margin-bottom:8px}
+.chat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;padding:10px 14px;border-radius:14px;font-size:15px;line-height:1.45}
+.msg.me{align-self:flex-end;background:var(--ink);color:var(--bg);border-bottom-right-radius:4px}
+.msg.bot{align-self:flex-start;background:var(--bg);border:1px solid var(--line);border-bottom-left-radius:4px}
+.tbl{align-self:stretch;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px}
+.tbl table{width:100%;border-collapse:collapse}.tbl td{padding:4px 0;border-bottom:1px solid var(--line)}.tbl td+td{text-align:right;font-variant-numeric:tabular-nums}
+.tbl .as{color:#b07d00;font-weight:600}
+@media (max-width:900px){.ai{grid-template-columns:1fr}}
+
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:36px;counter-reset:s}
+.steps div{border-top:3px solid var(--ink);padding-top:16px}
+.steps div::before{counter-increment:s;content:"Крок " counter(s);display:block;font-weight:700;font-size:14px;color:var(--muted);margin-bottom:6px}
+.steps p{color:var(--muted);font-size:16px;margin-top:8px}
+@media (max-width:760px){.steps{grid-template-columns:1fr}}
+
+.phone{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:48px;align-items:center}
+.phone img{border-radius:28px;border:8px solid #1b2328;box-shadow:0 24px 50px -24px rgba(0,0,0,.5)}
+@media (max-width:760px){.phone{grid-template-columns:1fr}.phone img{max-width:280px;margin:auto}}
+
+.honest{background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--signal);border-radius:12px;padding:24px 26px}
+.honest p{color:var(--muted);margin-top:8px;max-width:62em}
+
+.final{text-align:center}.final p{color:var(--muted);margin:14px auto 28px;max-width:36em}
+footer{padding-block:28px 40px;font-size:14px;color:var(--muted)}
+footer .row{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
+footer .legal{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:12px}footer .legal a{color:var(--muted)}
+.prices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:36px;align-items:stretch}
+.price{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;display:flex;flex-direction:column;gap:10px}
+.price.best{border:2px solid var(--signal);position:relative}
+.price .tag{position:absolute;top:-13px;left:22px;background:var(--signal);color:var(--signal-ink);font-weight:700;font-size:13px;padding:3px 10px;border-radius:99px}
+.price .sum{font-family:var(--display);font-size:40px;font-weight:700;line-height:1}.price .sum small{font-family:var(--body);font-size:16px;font-weight:500;color:var(--muted)}
+.price ul{margin:6px 0 0;padding-left:20px;color:var(--muted);font-size:16px}.price li{margin-bottom:6px}
+.price .btn{margin-top:auto;justify-content:center}
+.price-note{margin-top:20px;color:var(--muted);font-size:15px}
+@media (max-width:900px){.prices{grid-template-columns:1fr}}
+
+.etk{color:#c8102e;font-weight:800;letter-spacing:.02em}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:32px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.stat b{display:block;font-family:var(--display);font-size:30px;line-height:1.1}.stat span{color:var(--muted);font-size:15px}
+@media (max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.about{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;align-items:start}
+.about p{color:var(--muted);margin-top:14px}.certs{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.certs span{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:4px 10px;font-weight:600;font-size:14px}
+@media (max-width:900px){.about{grid-template-columns:1fr}}
+.line{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:32px}
+@media (max-width:1000px){.line{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (max-width:640px){.line{grid-template-columns:1fr}}
+.ser{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.ser .grp{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.ser h3{font-size:20px}.ser p{color:var(--muted);font-size:15px}
+.ser dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:6px 0 0;font-size:14px}.ser dt{color:var(--muted)}.ser dd{margin:0;font-weight:600}
+.ser .rare{align-self:flex-start;background:var(--signal);color:var(--signal-ink);font-weight:700;font-size:12px;padding:2px 9px;border-radius:99px}
+.why{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:32px}
+.why div{border-left:4px solid var(--n);background:var(--panel);border-radius:0 12px 12px 0;padding:18px 20px}
+.why div:nth-child(2){border-color:var(--pe)}.why div:nth-child(3){border-color:var(--l)}.why div:nth-child(4){border-color:var(--signal)}
+.why p{color:var(--muted);font-size:16px;margin-top:8px}
+@media (max-width:760px){.why{grid-template-columns:1fr}}
+.leadbox{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:40px;align-items:start}
+@media (max-width:900px){.leadbox{grid-template-columns:1fr}}
+.leadbox ul{color:var(--muted);padding-left:20px;margin-top:16px}.leadbox li{margin-bottom:6px}
+form.lead{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;display:grid;gap:14px}
+form.lead .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media (max-width:560px){form.lead .two{grid-template-columns:1fr}}
+form.lead label{display:grid;gap:6px;font-weight:600;font-size:15px}
+form.lead input,form.lead select,form.lead textarea{font:inherit;font-size:16px;font-weight:400;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);width:100%;min-width:0}
+form.lead textarea{min-height:84px;resize:vertical}
+form.lead fieldset{border:0;padding:0;margin:0}form.lead legend{font-weight:600;font-size:15px;margin-bottom:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}form.lead .chips label{display:inline-flex;align-items:center;gap:8px;font-weight:500;font-size:15px;border:1px solid var(--line);border-radius:99px;padding:6px 12px;cursor:pointer;background:var(--bg)}
+form.lead .chips input{width:18px;height:18px;padding:0;margin:0;flex:none;accent-color:#c8a000}.chips label:has(input:checked){border-color:var(--signal);background:color-mix(in srgb,var(--signal) 22%,var(--panel))}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+form.lead .fine{font-size:13px;color:var(--muted)}form.lead .fine a{color:var(--n)}
+form.lead button{justify-content:center;cursor:pointer;font-family:inherit}
+#lead-msg{min-height:1.3em;font-weight:600}#lead-msg.ok{color:var(--pe)}#lead-msg.bad{color:#b3261e}
+.done{text-align:center;padding:30px 10px}.done b{display:block;font-family:var(--display);font-size:24px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="wires pe" aria-hidden="true"></div>
+<header class="wrap">
+  <div class="top">
+    <a class="logo" href="./"><i><svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 1.5 3.5 9h4l-1 5.5 6-7.5h-4z" fill="#2a2200"/></svg></i>Дінрейка</a>
+    <nav aria-label="Розділи"><a href="./">Симулятор</a><a href="#line">Лінійка</a><a href="#why">Що закриває</a><a href="#lead">Заявка</a></nav>
+    <a class="btn main" href="#lead" style="padding:10px 16px;font-size:15px">Залишити заявку</a>
+  </div>
+</header>
+<main>
+<section class="wrap hero" style="padding-top:24px">
+  <div>
+    <p class="kicker">Новий бренд для українських щитів</p>
+    <h1><span class="etk">ETEK</span> — модульна автоматика, якої бракує на ринку</h1>
+    <p class="lead">Готуємо перші постачання ETEK в Україну. Почнемо з того, що найважче знайти: ПЗВ типу B, ПЗВ для зарядних станцій, дифавтомати в один модуль і захист від дугового пробою.</p>
+    <div class="cta"><a class="btn main" href="#lead">Залишити заявку</a><a class="btn" href="app/?brand=ETEK">Зібрати щит на ETEK</a></div>
+    <p class="fine">Заявка ні до чого не зобов'язує: повідомимо ціни й терміни, щойно партія буде на складі.</p>
+  </div>
+  <div class="enclosure"><div class="door"><img src="assets/etek-board.webp" alt="Щит, зібраний на апаратах ETEK у симуляторі Дінрейка" width="1110" height="1350"></div></div>
+</section>
+
+<div class="wires" aria-hidden="true"></div>
+<section>
+  <div class="wrap about">
+    <div>
+      <p class="kicker">Про виробника</p>
+      <h2>Завод у Чжецзяні, який робить лише захисну автоматику</h2>
+      <p>Zhejiang ETEK Electrical Technology працює з 2011 року в місті Юецін — центрі китайської електротехнічної галузі. Спеціалізація вузька: модульні автомати, ПЗВ, дифавтомати, захист від дугового пробою, автоматика для сонячних станцій і зарядок електромобілів.</p>
+      <p>Продукція продається у понад 100 країн, зокрема в ЄС, де апарати проходять незалежну сертифікацію.</p>
+      <div class="certs"><span>CE</span><span>CB</span><span>TÜV</span><span>VDE</span><span>SEMKO</span><span>UKCA</span><span>SAA</span><span>ISO 9001</span><span>ISO 14001</span><span>ISO 45001</span></div>
+    </div>
+    <div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:0">
+      <div class="stat"><b>2011</b><span>рік заснування</span></div>
+      <div class="stat"><b>40 000 м²</b><span>виробничих площ</span></div>
+      <div class="stat"><b>100+</b><span>країн експорту</span></div>
+      <div class="stat"><b>8 млн</b><span>полюсів автоматів на рік</span></div>
+    </div>
+  </div>
+  <p class="wrap" style="color:var(--muted);font-size:14px;margin-top:18px">Цифри й сертифікати — за даними виробника (etek-china.com), жовтень 2026. Документи на кожну серію перевіряємо до початку продажів.</p>
+</section>
+
+<div class="wires" aria-hidden="true"></div>
+<section id="line">
+  <div class="wrap">
+    <p class="kicker">Лінійка</p>
+    <h2>Що плануємо завозити</h2>
+    <div class="line">
+      <div class="ser"><span class="rare">Рідко буває в наявності</span><span class="grp">ПЗВ</span><h3>EKL6-100B · тип B</h3><p>Реагує і на гладкий постійний струм витоку. Для інверторів, частотних перетворювачів і зарядних станцій.</p><dl><dt>Полюси</dt><dd>2P, 4P</dd><dt>Струм</dt><dd>40, 63 А</dd><dt>Уставка</dt><dd>30 мА</dd><dt>Стандарт</dt><dd>IEC 61008-1, IEC 62423</dd></dl></div>
+      <div class="ser"><span class="rare">Для зарядок EV</span><span class="grp">ПЗВ</span><h3>EKL6-63EV</h3><p>Тип A з контролем постійного струму 6 мА — те, що вимагають більшість настінних зарядних станцій.</p><dl><dt>Полюси</dt><dd>2P</dd><dt>Струм</dt><dd>40 А</dd><dt>Уставка</dt><dd>30 мА + 6 мА DC</dd><dt>Стандарт</dt><dd>IEC 61008-1, IEC 62955</dd></dl></div>
+      <div class="ser"><span class="rare">Економить місце</span><span class="grp">Дифавтомати</span><h3>EKL19-40 · 1 модуль</h3><p>Повноцінний дифавтомат 1P+N шириною 18 мм: окремий захист кожної лінії без великого корпусу.</p><dl><dt>Струм</dt><dd>6–40 А</dd><dt>Характеристика</dt><dd>B, C</dd><dt>Уставка</dt><dd>30 мА, тип A</dd><dt>Стандарт</dt><dd>IEC 61009-1</dd></dl></div>
+      <div class="ser"><span class="rare">Захист від пожежі</span><span class="grp">AFDD</span><h3>EKL17-40AFD</h3><p>Дифавтомат із захистом від дугового пробою: вимикає лінію при іскрінні в поганому контакті чи пошкодженому кабелі.</p><dl><dt>Струм</dt><dd>16, 20 А</dd><dt>Характеристика</dt><dd>C</dd><dt>Уставка</dt><dd>30 мА, тип A</dd><dt>Стандарт</dt><dd>IEC 61009-1</dd></dl></div>
+      <div class="ser"><span class="grp">ПЗВ</span><h3>EKL1-63 · тип A</h3><p>Базові ПЗВ на групи розеток, освітлення і вологі зони.</p><dl><dt>Полюси</dt><dd>2P, 4P</dd><dt>Струм</dt><dd>25, 40, 63 А</dd><dt>Уставка</dt><dd>30, 100, 300 мА</dd><dt>Стандарт</dt><dd>IEC 61008-1</dd></dl></div>
+      <div class="ser"><span class="grp">Автомати</span><h3>EKM2-63</h3><p>Модульні автоматичні вимикачі для ліній і вводу.</p><dl><dt>Полюси</dt><dd>1P, 2P, 3P, 4P</dd><dt>Струм</dt><dd>6–63 А</dd><dt>Характеристика</dt><dd>B, C</dd><dt>Відключення</dt><dd>6 кА, IEC 60898-1</dd></dl></div>
+      <div class="ser"><span class="grp">Ввід</span><h3>EKD1-125</h3><p>Вимикачі навантаження для вводу і відключення груп.</p><dl><dt>Полюси</dt><dd>2P, 4P</dd><dt>Струм</dt><dd>40, 63, 100 А</dd><dt>Стандарт</dt><dd>IEC 60947-3</dd></dl></div>
+      <div class="ser"><span class="grp">Захист щита</span><h3>EKU5 · EKR8-7</h3><p>ПЗІП типу 2 від імпульсних перенапруг і реле напруги для захисту техніки від стрибків у мережі.</p><dl><dt>ПЗІП</dt><dd>1P+N, Imax 40 кА</dd><dt>Реле</dt><dd>1 і 3 фази</dd><dt>Стандарт</dt><dd>IEC 61643-11</dd></dl></div>
+      <div class="ser"><span class="grp">Сонячні станції</span><h3>EKM1-63DC · EKU5 PV</h3><p>DC-автомати і ПЗІП для ланцюгів сонячних панелей.</p><dl><dt>Напруга</dt><dd>до 1000 В DC</dd><dt>Автомати</dt><dd>2P, 16–63 А, C</dd><dt>Стандарт</dt><dd>IEC 60947-2, IEC 61643-31</dd></dl></div>
+    </div>
+  </div>
+</section>
+
+<div class="wires" aria-hidden="true"></div>
+<section id="why">
+  <div class="wrap">
+    <p class="kicker">Що закриває</p>
+    <h2>Чотири ситуації, де зараз шукаєш по магазинах</h2>
+    <div class="why">
+      <div><h3>Інвертор, бойлер з частотником, зарядка</h3><p>Там, де можливий гладкий постійний струм витоку, ПЗВ типу A може не спрацювати. Тип B часто немає в наявності, його доводиться чекати під замовлення. Ми хочемо тримати його на складі.</p></div>
+      <div><h3>Малий корпус, багато ліній</h3><p>Дифавтомат в один модуль дає окремий захист кожній лінії і вміщається там, де звичайний займає два.</p></div>
+      <div><h3>Дерев'яний будинок і старі лінії</h3><p>AFDD помічає іскріння в поганому контакті до того, як воно стане пожежею. В Європі такі апарати вже ставлять у спальнях і дерев'яних будинках.</p></div>
+      <div><h3>Сонячна станція</h3><p>DC-автомати і ПЗІП для панелей разом з AC-автоматикою — одна поставка на весь щит станції.</p></div>
+    </div>
+    <p style="color:var(--muted);font-size:15px;margin-top:18px">Вибір апаратів для конкретного об'єкта — за проєктом і чинними нормами. У Дінрейці можна зібрати щит на ETEK і перевірити його ще до закупівлі: у базі вже 78 позицій.</p>
+  </div>
+</section>
+
+<div class="wires pe" aria-hidden="true"></div>
+<section id="lead">
+  <div class="wrap leadbox">
+    <div>
+      <p class="kicker">Заявка</p>
+      <h2>Хочеш ETEK одним із перших?</h2>
+      <p style="color:var(--muted);margin-top:14px">Залиш контакти й познач, що цікавить. Перша партія формується за вашими заявками, тож саме ви вирішуєте, що буде на складі.</p>
+      <ul><li>Електрикам — ціни для монтажників і консультація з підбору</li><li>Прорабам — комплектація щитів під об'єкт</li><li>Магазинам — оптові умови і підтримка продажів</li></ul>
+    </div>
+    <form class="lead" id="leadform" novalidate>
+      <div class="two"><label>Ім'я<input name="name" autocomplete="name" required maxlength="120"></label><label>Телефон<input name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+380" required maxlength="40"></label></div>
+      <div class="two"><label>Місто<input name="city" autocomplete="address-level2" maxlength="120"></label>
+        <label>Хто ви<select name="role"><option value="electrician">Електрик-монтажник</option><option value="foreman">Прораб / бригада</option><option value="shop">Магазин електротоварів</option><option value="wholesale">Оптова компанія</option><option value="other">Інше</option></select></label></div>
+      <fieldset><legend>Що цікавить</legend><div class="chips">
+        <label><input type="checkbox" name="interest" value="rcd_b">ПЗВ тип B</label><label><input type="checkbox" name="interest" value="rcd_ev">ПЗВ для зарядок</label><label><input type="checkbox" name="interest" value="rcbo">Дифавтомати 1 модуль</label><label><input type="checkbox" name="interest" value="afdd">AFDD</label><label><input type="checkbox" name="interest" value="rcd_a">ПЗВ тип A</label><label><input type="checkbox" name="interest" value="mcb">Автомати</label><label><input type="checkbox" name="interest" value="switch">Вимикачі навантаження</label><label><input type="checkbox" name="interest" value="spd">ПЗІП</label><label><input type="checkbox" name="interest" value="relay">Реле напруги</label><label><input type="checkbox" name="interest" value="pv">Для сонячних станцій</label>
+      </div></fieldset>
+      <label>Орієнтовно апаратів на місяць<select name="volume"><option value="">Поки не знаю</option><option>до 20</option><option>20–100</option><option>100–500</option><option>понад 500</option></select></label>
+      <label>Коментар<textarea name="comment" maxlength="2000" placeholder="Наприклад: потрібні ПЗВ тип B 40 А під інвертори, 10 шт."></textarea></label>
+      <label class="hp" aria-hidden="true">Сайт<input name="website" tabindex="-1" autocomplete="off"></label>
+      <button class="btn main" type="submit">Надіслати заявку</button>
+      <p id="lead-msg" role="status"></p>
+      <p class="fine">Надсилаючи заявку, ти погоджуєшся на обробку контактів для зв'язку щодо постачань ETEK. <a href="privacy.html">Політика конфіденційності</a>.</p>
+    </form>
+  </div>
+</section>
+</main>
+
+<div class="wires pe" aria-hidden="true"></div>
+<footer class="wrap">
+  <div class="row"><span>Дінрейка · симулятор електрощитка</span><span>Не є офіційним продуктом Hager, Eaton, WAGO чи ZUBR. Торговельні марки належать їхнім власникам.</span></div>
+  <div class="legal"><a href="oferta.html">Публічна оферта</a><a href="privacy.html">Політика конфіденційності</a><a href="oferta.html#refund">Повернення коштів</a><a href="oferta.html#contacts">Контакти</a></div>
+</footer>
+<script>
+(function(){
+  var f = document.getElementById('leadform'), m = document.getElementById('lead-msg');
+  var URL = 'https://rezraseoiznvflktyktj.supabase.co/functions/v1/lead';
+  function say(t, k){ m.textContent = t; m.className = k || '' }
+  f.addEventListener('submit', function(e){
+    e.preventDefault();
+    var d = new FormData(f), body = {name:d.get('name'), phone:d.get('phone'), city:d.get('city'), role:d.get('role'), interest:d.getAll('interest'), volume:d.get('volume'), comment:d.get('comment'), website:d.get('website'), source:'etek-page'};
+    if (String(body.name || '').trim().length < 2) return say("Вкажи ім'я.", 'bad');
+    var dig = String(body.phone || '').replace(/\D/g, ''); if (dig.length < 9 || dig.length > 15) return say('Перевір номер телефону.', 'bad');
+    var b = f.querySelector('button[type=submit]'); b.disabled = true; say('Надсилаю…');
+    fetch(URL, {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(body)})
+      .then(function(r){ return r.json().catch(function(){ return {} }).then(function(j){ return [r.ok, j] }) })
+      .then(function(x){ b.disabled = false; if (x[0]){ f.innerHTML = '<div class="done"><b>Дякуємо, заявку отримано!</b>Зателефонуємо або напишемо, щойно будуть ціни й терміни першої партії.</div>'; return } say(x[1].message || 'Не вдалося надіслати. Спробуй ще раз.', 'bad') })
+      .catch(function(){ b.disabled = false; say("Немає зв'язку. Перевір інтернет і спробуй ще раз.", 'bad') });
+  });
+})();
+</script>
+</body>
+</html>

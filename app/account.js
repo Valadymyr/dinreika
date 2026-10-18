@@ -213,6 +213,7 @@
       if (ev === 'SIGNED_IN' && location.hash.indexOf('access_token') >= 0) history.replaceState(null, '', location.pathname + location.search);
     });
     afterPay();
+    try { var qb = new URLSearchParams(location.search).get('brand'), sel = $('ab-brand'); if (qb && sel && [].some.call(sel.options, function (o) { return o.value === qb; })) { sel.value = qb; if (sel.onchange) sel.onchange(); } } catch (e) {}
     if (location.hash === '#pay') { history.replaceState(null, '', location.pathname + location.search); open(''); }
     setInterval(refresh, 30 * 60 * 1000);
   }
