@@ -2332,8 +2332,9 @@ let AI = null, aiTurns = [], aiCtl = null, aiPending = null;
 const AI_URL = 'https://rezraseoiznvflktyktj.supabase.co/functions/v1/ai-chat';
 async function aiBackend(input, opts){ const msgs = input.slice(2).map(t => ({role:t.role, content:t.content})), tools = (opts.tools || []).map(t => ({name:t.name, description:t.description, input_schema:t.inputSchema || {type:'object', properties:{}}})), byName = Object.fromEntries((opts.tools || []).map(t => [t.name, t])); let text = '';
   for (let round = 0; round < 10; round++){ let res, j;
-    try{ res = await fetch(AI_URL, {method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify({messages:msgs, tools}), signal:opts.signal}); j = await res.json().catch(() => ({})) }
+    try{ res = await fetch(AI_URL, {method:'POST', headers:Object.assign({'content-type':'application/json'}, window.DR && DR.token() ? {authorization:'Bearer ' + DR.token()} : {}), body:JSON.stringify({messages:msgs, tools}), signal:opts.signal}); j = await res.json().catch(() => ({})) }
     catch(e){ throw {code:e && e.name === 'AbortError' ? 'cancelled' : 'network', message:'Немає зв\'язку з сервером помічника. Перевір інтернет.', text, fromServer:true} }
+    if (!res.ok && j.error === 'need_sub' && window.DR) DR.paywall('Безкоштовні запити до AI-помічника на сьогодні закінчились.');
     if (!res.ok) throw {code:j.error || 'upstream_error', message:j.message || 'Помічник зараз недоступний.', text, fromServer:true};
     const blocks = Array.isArray(j.content) ? j.content : [], t = blocks.filter(b => b.type === 'text').map(b => b.text).join('\n').trim(); if (t){ text = t; if (opts.onText) opts.onText({text}) }
     if (typeof j.left === 'number') AI.left = j.left;
@@ -2466,5 +2467,7 @@ try{ initSteps(); DIAG.boot = 'скрипт працює' }catch(e){ showErr(e.m
 </script>
 
 
+<script src="vendor/supabase.js"></script>
+<script src="account.js"></script>
 </body>
 </html>
