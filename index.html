@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Дінрейка — симулятор електрощитка</title>
+<meta name="description" content="Збери розподільчий щит у браузері: автомати, ПЗВ і кабелі під споживачів, повна розводка L, N і PE, перевірки, однолінійна схема, специфікація і наклейки. Hager, Eaton, WAGO, ZUBR.">
+<meta property="og:title" content="Дінрейка — симулятор електрощитка">
+<meta property="og:description" content="Збери щит у браузері до того, як купиш апарати. Перевірки, схема, специфікація і наклейки.">
+<meta property="og:image" content="assets/board.webp">
+<link rel="icon" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
+<style>
+/* Шар за шаром, як щит: смуга проводів L · N · PE розділяє розділи; знімки програми в рамці корпусу. */
+:root{
+  --bg:#eef1f2; --panel:#ffffff; --ink:#121a20; --muted:#55626b; --line:#d3d9dc;
+  --signal:#f2c200; --signal-ink:#2a2200; --l:#8a5426; --n:#1c63c7; --pe:#3f8f2e;
+  --frame:#f8f9f7; --frame-edge:#c9cfd1;
+  --display:"Unbounded","Golos Text",system-ui,sans-serif; --body:"Golos Text",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#11171b;--panel:#182127;--ink:#eef2f4;--muted:#9aa8b1;--line:#2b373f;--frame:#1d272e;--frame-edge:#35424a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11171b;--panel:#182127;--ink:#eef2f4;--muted:#9aa8b1;--line:#2b373f;--frame:#1d272e;--frame-edge:#35424a;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--body)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+a{color:inherit}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--display);line-height:1.12;text-wrap:balance;margin:0}
+h1{font-size:clamp(34px,5.4vw,62px);font-weight:700;letter-spacing:-.01em}
+h2{font-size:clamp(26px,3.4vw,40px);font-weight:700}
+h3{font-size:19px;font-weight:500}
+p{margin:0}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border-radius:10px;font-weight:700;font-size:17px;text-decoration:none;border:2px solid var(--ink)}
+.btn.main{background:var(--signal);color:var(--signal-ink);border-color:var(--signal)}
+.btn.main:hover{filter:brightness(1.05)}
+.btn:focus-visible{outline:3px solid var(--n);outline-offset:3px}
+.wires{height:9px;background:linear-gradient(var(--l) 0 3px,var(--n) 3px 6px,var(--pe) 6px 9px)}
+.wires.pe{background:linear-gradient(var(--l) 0 3px,var(--n) 3px 6px,repeating-linear-gradient(90deg,var(--pe) 0 14px,#e3c234 14px 28px) 0 6px/100% 3px no-repeat)}
+
+header{padding-block:18px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:20px;text-decoration:none}
+.logo i{width:34px;height:34px;border-radius:8px;background:var(--signal);display:grid;place-items:center}
+.top nav{display:flex;gap:22px;font-size:15px}.top nav a{text-decoration:none;color:var(--muted)}.top nav a:hover{color:var(--ink)}
+@media (max-width:760px){.top nav{display:none}}
+
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:48px;align-items:center;padding-block:40px 64px}
+.hero .lead{font-size:20px;color:var(--muted);max-width:34em;margin-block:22px 30px}
+.hero .cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.hero .fine{font-size:14px;color:var(--muted);margin-top:16px}
+.enclosure{background:var(--frame);border:1px solid var(--frame-edge);border-radius:18px;padding:14px;box-shadow:0 30px 60px -30px rgba(10,20,30,.45)}
+.enclosure .door{border-radius:10px;overflow:hidden;border:1px solid var(--frame-edge);max-height:560px;background:#fff}
+.enclosure .door img{width:100%}
+@media (max-width:900px){.hero{grid-template-columns:1fr;gap:32px;padding-top:16px}}
+
+section{padding-block:72px}
+.kicker{font-size:15px;font-weight:600;color:var(--muted);margin-bottom:12px}
+.grid4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:36px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card p{color:var(--muted);font-size:16px}
+.card .shot{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;margin-top:auto;max-height:230px}
+@media (max-width:760px){.grid4{grid-template-columns:1fr}}
+
+.ai{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:start}
+.ai ul{padding-left:20px;margin:20px 0 0;color:var(--muted)}.ai li{margin-bottom:8px}
+.chat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;padding:10px 14px;border-radius:14px;font-size:15px;line-height:1.45}
+.msg.me{align-self:flex-end;background:var(--ink);color:var(--bg);border-bottom-right-radius:4px}
+.msg.bot{align-self:flex-start;background:var(--bg);border:1px solid var(--line);border-bottom-left-radius:4px}
+.tbl{align-self:stretch;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px}
+.tbl table{width:100%;border-collapse:collapse}.tbl td{padding:4px 0;border-bottom:1px solid var(--line)}.tbl td+td{text-align:right;font-variant-numeric:tabular-nums}
+.tbl .as{color:#b07d00;font-weight:600}
+@media (max-width:900px){.ai{grid-template-columns:1fr}}
+
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:36px;counter-reset:s}
+.steps div{border-top:3px solid var(--ink);padding-top:16px}
+.steps div::before{counter-increment:s;content:"Крок " counter(s);display:block;font-weight:700;font-size:14px;color:var(--muted);margin-bottom:6px}
+.steps p{color:var(--muted);font-size:16px;margin-top:8px}
+@media (max-width:760px){.steps{grid-template-columns:1fr}}
+
+.phone{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:48px;align-items:center}
+.phone img{border-radius:28px;border:8px solid #1b2328;box-shadow:0 24px 50px -24px rgba(0,0,0,.5)}
+@media (max-width:760px){.phone{grid-template-columns:1fr}.phone img{max-width:280px;margin:auto}}
+
+.honest{background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--signal);border-radius:12px;padding:24px 26px}
+.honest p{color:var(--muted);margin-top:8px;max-width:62em}
+
+.final{text-align:center}.final p{color:var(--muted);margin:14px auto 28px;max-width:36em}
+footer{padding-block:28px 40px;font-size:14px;color:var(--muted)}
+footer .row{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
+</style>
+</head>
+<body>
+<div class="wires pe" aria-hidden="true"></div>
+<header class="wrap">
+  <div class="top">
+    <a class="logo" href="./"><i><svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 1.5 3.5 9h4l-1 5.5 6-7.5h-4z" fill="#2a2200"/></svg></i>Дінрейка</a>
+    <nav aria-label="Розділи"><a href="#can">Що вміє</a><a href="#ai">AI-помічник</a><a href="#how">Як працює</a></nav>
+    <a class="btn main" href="app/" style="padding:10px 16px;font-size:15px">Відкрити</a>
+  </div>
+</header>
+
+<main>
+<div class="wrap hero">
+  <div>
+    <h1>Збери щит до того, як купиш апарати</h1>
+    <p class="lead">Симулятор розподільчого щита для електриків. Впиши споживачів, і програма підбере автомати, ПЗВ і кабелі, розведе фазу, нуль і землю, перевірить помилки й підготує схему, специфікацію та наклейки.</p>
+    <div class="cta"><a class="btn main" href="app/">Відкрити симулятор</a><a class="btn" href="#how">Як це працює</a></div>
+    <p class="fine">Безкоштовно, без реєстрації. Hager, Eaton, WAGO, ZUBR — 987 товарів у базі.</p>
+  </div>
+  <div class="enclosure"><div class="door"><img src="assets/board.webp" width="1400" height="1702" alt="Щит у симуляторі: ввідний вимикач, реле напруги, ПЗВ і автомати з повною розводкою фази, нуля і землі"></div></div>
+</div>
+
+<div class="wires" aria-hidden="true"></div>
+<section id="can">
+  <div class="wrap">
+    <p class="kicker">Що вміє</p>
+    <h2>Від списку споживачів до наклейок на щит</h2>
+    <div class="grid4">
+      <article class="card"><h3>Збирає щит за списком</h3><p>Розетки й світло під груповими ПЗВ, техніка і волога зона на окремих дифавтоматах. Корпус і розподіл підбираються під кількість ліній.</p><div class="shot"><img src="assets/board.webp" loading="lazy" alt="Зібраний щит" width="1400" height="1702"></div></article>
+      <article class="card"><h3>Перевіряє помилки</h3><p>Автомат проти кабелю, втрата напруги, струм короткого замикання, тип ПЗВ, більше двох проводів під гвинт, система заземлення.</p><div class="shot"><img src="assets/checks.webp" loading="lazy" alt="Список перевірок щита" width="1400" height="267"></div></article>
+      <article class="card"><h3>Креслить схему</h3><p>Однолінійна схема з таблицею груп: номінали, кабелі, довжини, втрата напруги. Друк на А4 зі штампом об'єкта.</p><div class="shot"><img src="assets/scheme.webp" loading="lazy" alt="Однолінійна схема щита" width="1400" height="1938"></div></article>
+      <article class="card"><h3>Друкує наклейки</h3><p>Кольорові смужки в масштабі 1:1 під вікно маркування: назва лінії, значок і номінал замість незрозумілих QF1.</p><div class="shot"><img src="assets/labels.webp" loading="lazy" alt="Кольорові наклейки на апарати" width="1400" height="277"></div></article>
+    </div>
+  </div>
+</section>
+
+<div class="wires" aria-hidden="true"></div>
+<section id="ai">
+  <div class="wrap ai">
+    <div>
+      <p class="kicker">AI-помічник</p>
+      <h2>Опиши об'єкт словами або голосом</h2>
+      <p style="margin-top:18px;color:var(--muted)">Помічник розуміє мову електрика, складає список і показує його на підтвердження. Щит збирає і перевіряє сама програма, тому розрахунок щоразу однаковий.</p>
+      <ul>
+        <li>«Додай теплу підлогу у ванну, 1,5 кВт»</li>
+        <li>«Перейди на Eaton і збери заново»</li>
+        <li>«Підключи бойлер через контактор»</li>
+        <li>«Чому помилка на лінії кухні?»</li>
+      </ul>
+    </div>
+    <div class="chat" aria-label="Приклад розмови з помічником">
+      <div class="msg me">Двокімнатна, одна фаза, 40 ампер. Розетки в трьох кімнатах, світло, пральна, бойлер 2 кВт, варильна 7.</div>
+      <div class="tbl"><b style="font-size:14px">Список на підтвердження</b><table><tr><td>Розетки спальня</td><td class="as">2,2 кВт *</td></tr><tr><td>Розетки вітальня</td><td class="as">2,2 кВт *</td></tr><tr><td>Розетки кухня</td><td class="as">2,2 кВт *</td></tr><tr><td>Освітлення</td><td class="as">0,5 кВт *</td></tr><tr><td>Пральна машина</td><td class="as">2,2 кВт *</td></tr><tr><td>Бойлер</td><td>2 кВт</td></tr><tr><td>Варильна поверхня</td><td>7 кВт</td></tr></table><p style="font-size:12.5px;color:var(--muted);margin-top:6px">* потужність не названа, взято типову</p></div>
+      <div class="msg bot">Щит зібрано: 12 апаратів у корпусі на 36 модулів. Помилок немає, одне попередження: впиши довжини ліній, щоб перевірити втрату напруги.</div>
+    </div>
+  </div>
+</section>
+
+<div class="wires" aria-hidden="true"></div>
+<section id="how">
+  <div class="wrap">
+    <p class="kicker">Як працює</p>
+    <h2>Три кроки до готового щита</h2>
+    <div class="steps">
+      <div><h3>Об'єкт і споживачі</h3><p>Система заземлення, ввідний автомат, список споживачів з потужністю, кабелем і довжиною лінії.</p></div>
+      <div><h3>Збірка і перевірки</h3><p>Програма розставляє апарати, розводить L, N і PE, перевіряє все. Можна правити руками: переставляти апарати, вести проводи, змінювати перетини.</p></div>
+      <div><h3>Документи</h3><p>Специфікація з дрібницями, схема, таблиця розключення, список для власника і наклейки. Друк або файл.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap phone">
+    <div><h2>На об'єкті з телефона</h2><p style="margin-top:16px;color:var(--muted)">Мобільна версія з вкладками внизу: споживачі, щит, перевірки, документи. Проєкт зберігається у файл і відкривається на комп'ютері для ручної розводки.</p></div>
+    <img src="assets/phone.webp" loading="lazy" alt="Симулятор на телефоні" width="780" height="1328">
+  </div>
+</section>
+
+<section>
+  <div class="wrap honest">
+    <h3>Чесно про межі</h3>
+    <p>Розрахунки довідкові: таблиці допустимих струмів за IEC 60364-5-52, спрощена перевірка короткого замикання і селективності. Програма не замінює проєкт і не враховує всіх умов об'єкта. Рішення про апарати й кабелі приймає кваліфікований електрик або проєктувальник за чинними нормами.</p>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>Спробуй на своєму наступному щиті</h2>
+    <p>Відкривається в браузері, на комп'ютері й телефоні. Реєстрація не потрібна.</p>
+    <a class="btn main" href="app/">Відкрити симулятор</a>
+  </div>
+</section>
+</main>
+
+<div class="wires pe" aria-hidden="true"></div>
+<footer class="wrap">
+  <div class="row"><span>Дінрейка · симулятор електрощитка</span><span>Не є офіційним продуктом Hager, Eaton, WAGO чи ZUBR. Торговельні марки належать їхнім власникам.</span></div>
+</footer>
+</body>
+</html>
