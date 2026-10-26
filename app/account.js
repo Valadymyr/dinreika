@@ -4,7 +4,13 @@
   var SB_URL = 'https://rezraseoiznvflktyktj.supabase.co';
   var SB_KEY = 'sb_publishable_QY5BGXy4c_aSDvSh9riyuw_ChnE0_z3';
   var BILL = SB_URL + '/functions/v1/billing';
-  var PLANS = { month: { price: 129, label: 'Місяць', sub: '30 днів доступу' }, year: { price: 1200, label: 'Рік', sub: '365 днів доступу · економія 348 грн' } };
+  var PLANS = {
+    week: { price: 50, label: 'Тиждень', sub: '7 днів · щоб надрукувати наклейки на один-два щити' },
+    month: { price: 129, label: 'Місяць', sub: '30 днів доступу' },
+    year: { price: 899, label: 'Рік', sub: '365 днів · 75 грн на місяць, економія 649 грн', tag: 'Вигідно' },
+    life: { price: 4000, label: 'Назавжди', sub: 'один раз заплатив — користуєшся без терміну', tag: 'Без підписок' }
+  };
+  var ORDER = ['week', 'month', 'year', 'life'];
   var LOCKED = { 'btn-printnow': 'Друк документів', 'btn-print': 'Документи файлом', 'btn-lblnow': 'Друк наклейок', 'btn-lbl': 'Наклейки файлом', 'btn-copy': 'Копіювання специфікації', 'pj-exp': 'Збереження проєкту у файл' };
 
   var sb = null, TOKEN = '', USER = null, SUB = { active: false, paid_until: null }, google = false;
@@ -28,7 +34,9 @@
     '#acc button:disabled{opacity:.55;cursor:wait}' +
     '#acc .gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--panel)}' +
     '#acc .or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}#acc .or:before,#acc .or:after{content:"";flex:1;height:1px;background:var(--line)}' +
-    '#acc .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}' +
+    '#acc .plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}@media (max-width:340px){#acc .plans{grid-template-columns:1fr}}#acc .plan > *{justify-self:start;text-align:left}@media (max-width:520px){#acc .plan{padding:10px}#acc .plan b{font-size:20px}#acc .plan small{font-size:12px}}' +
+    '#acc .promo{display:flex;gap:8px;flex-wrap:wrap}#acc .promo input{flex:1 1 160px;min-width:0;font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);text-transform:uppercase}' +
+    '#acc details.pr summary{cursor:pointer;color:var(--link);font-weight:600}' +
     '#acc .plan{display:grid;justify-items:start;align-content:start;gap:4px;padding:14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);text-align:left}' +
     '#acc .plan.best{border:2px solid var(--signal)}' +
     '#acc .plan b{font-family:var(--display);font-size:24px;font-weight:600}#acc .plan .pl{font-weight:700}#acc .plan small{color:var(--muted);font-weight:500}' +
@@ -68,8 +76,12 @@
     ui.t.textContent = SUB.active ? 'Підписка' : 'Оформити підписку';
     var who = el('div', 'who'); who.append(el('span', '', USER.email || 'Акаунт'));
     var out = el('button', '', 'Вийти'); out.onclick = logout; who.append(out); b.append(who);
+    if (SUB.active && SUB.lifetime) {
+      var s0 = el('div', 'status on'); s0.append(el('b', '', 'Доступ назавжди'), el('div', '', 'Усі можливості відкриті без терміну. Дякуємо, що з нами!'));
+      b.append(s0, msgEl()); return;
+    }
     if (SUB.active) {
-      var s = el('div', 'status on'); s.append(el('b', '', 'Підписка діє до ' + fmtDate(SUB.paid_until)), el('div', '', 'Усі можливості відкриті. Можна продовжити заздалегідь: дні додадуться до поточного терміну.'));
+      var s = el('div', 'status on'); s.append(el('b', '', (SUB.plan === 'promo' ? 'Пробний доступ до ' : 'Підписка діє до ') + fmtDate(SUB.paid_until)), el('div', '', 'Усі можливості відкриті. Можна продовжити заздалегідь: дні додадуться до поточного терміну.'));
       b.append(s);
     } else {
       var inc = el('ul', 'inc');
@@ -77,14 +89,18 @@
       b.append(inc);
     }
     var pl = el('div', 'plans');
-    ['month', 'year'].forEach(function (k) {
+    ORDER.forEach(function (k) {
       var p = PLANS[k], c = el('button', 'plan' + (k === 'year' ? ' best' : '')); c.type = 'button';
-      if (k === 'year') c.append(el('span', 'tag', 'Вигідніше'));
+      if (p.tag) c.append(el('span', 'tag', p.tag));
       c.append(el('span', 'pl', p.label), el('b', '', p.price + ' грн'), el('small', '', p.sub));
       c.onclick = function () { pay(k, c); };
       pl.append(c);
     });
-    b.append(pl, msgEl());
+    b.append(pl);
+    var pd = el('details', 'pr'), ps = el('summary', '', 'Є промокод?'), pr = el('div', 'promo'), pi = el('input'), pb = el('button', '', 'Застосувати');
+    pi.placeholder = 'Наприклад, TIKTOK3'; pi.autocomplete = 'off'; pi.maxLength = 40; pi.setAttribute('aria-label', 'Промокод'); pb.type = 'button';
+    pb.onclick = function () { promo(pi.value, pb); }; pi.onkeydown = function (e) { if (e.key === 'Enter') pb.click(); };
+    pr.append(pi, pb); pd.append(ps, pr); if (pendingPromo) { pd.open = true; pi.value = pendingPromo; b.insertBefore(pd, pl); b.append(msgEl()); } else b.append(pd, msgEl());
     var f = el('p', 'fine'); f.innerHTML = 'Оплата карткою через monobank. Підписка не продовжується автоматично: коли термін закінчиться, оплатиш знову. <a href="../oferta.html" target="_blank" rel="noopener">Публічна оферта</a> · <a href="../privacy.html" target="_blank" rel="noopener">Конфіденційність</a>';
     b.append(f);
   }
@@ -117,7 +133,7 @@
   function paint() {
     if (!ui.btn) return;
     ui.btn.className = USER ? (SUB.active ? 'on' : 'off') : '';
-    ui.btn.textContent = !USER ? 'Увійти' : SUB.active ? 'Pro до ' + shortDate(SUB.paid_until) : 'Підписка';
+    ui.btn.textContent = !USER ? 'Увійти' : SUB.active ? (SUB.lifetime ? 'Pro назавжди' : 'Pro до ' + shortDate(SUB.paid_until)) : 'Підписка';
     Object.keys(LOCKED).forEach(function (id) { var x = $(id); if (x) x.classList.toggle('drlock', !SUB.active); });
   }
 
@@ -153,7 +169,7 @@
   function refresh() {
     if (!TOKEN) return Promise.resolve();
     return call({ action: 'status' }).then(function (j) {
-      if (j._status === 200) { SUB = { active: !!j.active, paid_until: j.paid_until, plan: j.plan }; paint(); if (ui.d && ui.d.open) render(); }
+      if (j._status === 200) { SUB = { active: !!j.active, paid_until: j.paid_until, plan: j.plan, lifetime: !!j.lifetime }; paint(); if (ui.d && ui.d.open) render(); }
     }).catch(function () {});
   }
   function pay(plan, btn) {
@@ -163,6 +179,16 @@
       if (j.pageUrl) { setNote('Переходимо на сторінку оплати monobank…', 'ok'); location.href = j.pageUrl; return; }
       setNote(j.message || 'Не вдалося створити рахунок. Спробуй ще раз.', 'bad');
     }).catch(function () { busy = false; btn.disabled = false; setNote('Немає зв\'язку з сервером оплати.', 'bad'); });
+  }
+  var pendingPromo = '';
+  function promo(code, btn) {
+    code = String(code || '').trim().toUpperCase(); if (!code) return setNote('Впиши промокод.', 'bad');
+    btn.disabled = true; setNote('Перевіряю промокод…');
+    call({ action: 'promo', code: code }).then(function (j) {
+      btn.disabled = false;
+      if (j._status === 200) { pendingPromo = ''; SUB = { active: !!j.active, paid_until: j.paid_until, plan: j.plan, lifetime: !!j.lifetime }; paint(); render(); setNote('Готово! Повний доступ відкрито на ' + j.days + ' дн., до ' + fmtDate(j.paid_until).replace(/\.$/, '') + '.', 'ok'); return; }
+      setNote(j.message || 'Промокод не спрацював.', 'bad');
+    }).catch(function () { btn.disabled = false; setNote('Немає зв\'язку з сервером.', 'bad'); });
   }
   function afterPay() {
     var q = new URLSearchParams(location.search); if (q.get('paid') !== '1') return;
@@ -214,6 +240,7 @@
     });
     afterPay();
     try { var qb = new URLSearchParams(location.search).get('brand'), sel = $('ab-brand'); if (qb && sel && [].some.call(sel.options, function (o) { return o.value === qb; })) { sel.value = qb; if (sel.onchange) sel.onchange(); } } catch (e) {}
+    try { var qp = new URLSearchParams(location.search).get('promo'); if (qp) { pendingPromo = qp.toUpperCase().slice(0, 40); reason = 'Промокод ' + pendingPromo + ': 3 дні повного доступу безкоштовно. Увійди поштою — і натисни «Застосувати».'; open(); } } catch (e) {}
     if (location.hash === '#pay') { history.replaceState(null, '', location.pathname + location.search); open(''); }
     setInterval(refresh, 30 * 60 * 1000);
   }

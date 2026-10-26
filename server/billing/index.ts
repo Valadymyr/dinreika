@@ -2,8 +2,10 @@
 import { createClient } from "npm:@supabase/supabase-js@2.45.4";
 
 const PLANS: Record<string, { amount: number; title: string }> = {
+  week: { amount: 5000, title: "Дінрейка: доступ на 7 днів" },
   month: { amount: 12900, title: "Дінрейка: підписка на 30 днів" },
-  year: { amount: 120000, title: "Дінрейка: підписка на 365 днів" },
+  year: { amount: 89900, title: "Дінрейка: підписка на 365 днів" },
+  life: { amount: 400000, title: "Дінрейка: доступ назавжди" },
 };
 const ORIGINS = (Deno.env.get("ALLOWED_ORIGINS") ?? "https://valadymyr.github.io,http://localhost:8080").split(",").map((o) => o.trim()).filter(Boolean);
 const APP_PATH = Deno.env.get("APP_PATH") ?? "/dinreika/app/";
@@ -40,7 +42,11 @@ async function state(userId: string) {
   const row = (Array.isArray(data) ? data[0] : data) ?? {};
   return { paid_until: row.paid_until ?? null, last_plan: row.last_plan ?? null, pending: row.pending ?? [] };
 }
-const view = (s: any) => ({ active: !!s.paid_until && new Date(s.paid_until) > new Date(), paid_until: s.paid_until, plan: s.last_plan });
+const view = (s: any) => ({ active: !!s.paid_until && new Date(s.paid_until) > new Date(), paid_until: s.paid_until, plan: s.last_plan, lifetime: s.last_plan === "life" });
+const PROMO_MSG: Record<string, string> = {
+  not_found: "Такого промокоду немає.", expired: "Термін дії промокоду минув.", exhausted: "Промокод уже використали всі, кому він був призначений.",
+  used: "Ти вже використав цей промокод.", one_per_account: "На один акаунт діє лише один промокод.",
+};
 
 Deno.serve(async (req) => {
   const url = new URL(req.url);
@@ -75,6 +81,16 @@ Deno.serve(async (req) => {
         s = await state(user.id);
       }
       return reply(origin, 200, view(s));
+    }
+
+    if (body.action === "promo") {
+      const code = String(body.code ?? "").trim().toUpperCase().slice(0, 40);
+      if (!/^[A-Z0-9_-]{3,40}$/.test(code)) return reply(origin, 400, { error: "promo", message: PROMO_MSG.not_found });
+      const { data, error } = await db.rpc("promo_redeem", { p_user: user.id, p_code: code });
+      if (error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row?.ok) return reply(origin, 400, { error: "promo", message: PROMO_MSG[row?.reason] ?? PROMO_MSG.not_found });
+      return reply(origin, 200, { ...view(await state(user.id)), days: row.days });
     }
 
     if (body.action === "create") {
