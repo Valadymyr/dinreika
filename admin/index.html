@@ -93,8 +93,8 @@ details summary{cursor:pointer;color:var(--link);font-size:12px}
   function msg(box, t, k){ box.textContent = t || ''; box.className = 'msg' + (k ? ' ' + k : '') }
 
   /* ---------- вхід ---------- */
-  $('send').onclick = async () => { email = $('em').value.trim(); if (!email) return; $('send').disabled = true; const r = await sb.auth.signInWithOtp({email, options:{shouldCreateUser:false, emailRedirectTo:location.origin + location.pathname}}); $('send').disabled = false;
-    if (r.error) return msg($('lmsg'), 'Не вдалося: ' + r.error.message, 'bad'); $('codebox').hidden = false; msg($('lmsg'), 'Код надіслано. Можна також відкрити посилання з листа.', 'ok') };
+  $('send').onclick = async () => { email = $('em').value.trim(); if (!email) return; $('send').disabled = true; const r = await sb.auth.signInWithOtp({email, options:{shouldCreateUser:true, emailRedirectTo:location.origin + location.pathname}}); $('send').disabled = false;
+    if (r.error) return msg($('lmsg'), /rate|seconds|limit/i.test(r.error.message) ? 'Забагато спроб. Зачекай хвилину і спробуй ще.' : 'Не вдалося: ' + r.error.message, 'bad'); $('codebox').hidden = false; msg($('lmsg'), 'Код надіслано. Можна також відкрити посилання з листа.', 'ok') };
   $('verify').onclick = async () => { const r = await sb.auth.verifyOtp({email, token:$('code').value.replace(/\D/g, ''), type:'email'}); if (r.error) msg($('lmsg'), 'Код не підійшов.', 'bad') };
   $('out').onclick = () => sb.auth.signOut();
   sb.auth.onAuthStateChange((ev, s) => { TOKEN = s ? s.access_token : ''; const on = !!s; $('login').hidden = on; $('view').hidden = !on; $('tabs').hidden = !on; $('out').hidden = !on; $('who').textContent = on ? s.user.email : '';
