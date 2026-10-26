@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Адмінка — Дінрейка</title>
+<link rel="icon" href="../favicon.svg">
+<style>
+:root{--bg:#e9edf0;--panel:#fff;--ink:#14212b;--muted:#5a6976;--line:#d0d7dd;--soft:#f1f4f6;--signal:#f2c200;--signal-ink:#231c00;--ok:#1f7a4d;--okbg:#eaf6ef;--bad:#b3261e;--badbg:#fbefee;--warn:#8a5a00;--warnbg:#fdf4dd;--link:#0d5fa6}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#11171b;--panel:#182127;--ink:#e8eef2;--muted:#9aa8b4;--line:#2f3b44;--soft:#202a31;--ok:#5fc48f;--okbg:#17301f;--bad:#f2867f;--badbg:#3a1d1b;--warn:#f0c060;--warnbg:#332a12;--link:#6db8f2;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11171b;--panel:#182127;--ink:#e8eef2;--muted:#9aa8b4;--line:#2f3b44;--soft:#202a31;--ok:#5fc48f;--okbg:#17301f;--bad:#f2867f;--badbg:#3a1d1b;--warn:#f0c060;--warnbg:#332a12;--link:#6db8f2;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select{font:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:8px 12px;font-weight:600;min-height:38px}
+button.go{background:var(--signal);border-color:var(--signal);color:var(--signal-ink)}
+button.danger{border-color:var(--bad);color:var(--bad)}
+button:disabled{opacity:.5;cursor:wait}
+input,select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--panel);color:var(--ink);min-height:38px;min-width:0}
+a{color:var(--link)}
+header{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px}
+.logo i{width:30px;height:30px;border-radius:8px;background:var(--signal);display:grid;place-items:center}
+nav[role=tablist]{display:flex;gap:4px;flex-wrap:wrap}
+nav[role=tablist] button{border:0;background:transparent;color:var(--muted);min-height:36px}
+nav[role=tablist] button[aria-selected=true]{background:var(--soft);color:var(--ink)}
+.sp{flex:1}
+main{max-width:1200px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:22px;margin:0 0 14px}h2{font-size:17px;margin:22px 0 10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.card b{display:block;font-size:26px;font-variant-numeric:tabular-nums}.card span{color:var(--muted);font-size:13px}
+.card.alert{border-color:var(--bad)}.card.alert b{color:var(--bad)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--muted);font-weight:700;white-space:nowrap;background:var(--soft);position:sticky;top:0}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--soft);white-space:nowrap}
+.tag.ok{background:var(--okbg);color:var(--ok)}.tag.bad{background:var(--badbg);color:var(--bad)}.tag.warn{background:var(--warnbg);color:var(--warn)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}.acts button{min-height:32px;padding:4px 10px;font-size:12px}
+.msg{min-height:1.4em;margin:8px 0;font-weight:600}.msg.bad{color:var(--bad)}.msg.ok{color:var(--ok)}
+.login{max-width:420px;margin:60px auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:12px}
+.login input{width:100%}
+pre{white-space:pre-wrap;word-break:break-word;font-size:11px;color:var(--muted);margin:6px 0 0;max-height:140px;overflow:auto}
+details summary{cursor:pointer;color:var(--link);font-size:12px}
+.form{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;align-items:end;margin-bottom:12px}
+.form label{display:grid;gap:4px;font-size:12px;color:var(--muted);font-weight:600}
+.sr{position:absolute;left:-9999px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><i><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 1.5 3.5 9h4l-1 5.5 6-7.5h-4z" fill="#231c00"/></svg></i>Дінрейка · адмінка</div>
+  <nav role="tablist" id="tabs" hidden>
+    <button role="tab" data-t="overview" aria-selected="true">Огляд</button>
+    <button role="tab" data-t="users" aria-selected="false">Користувачі</button>
+    <button role="tab" data-t="errors" aria-selected="false">Помилки</button>
+    <button role="tab" data-t="leads" aria-selected="false">Заявки ETEK</button>
+    <button role="tab" data-t="promos" aria-selected="false">Промокоди</button>
+  </nav>
+  <span class="sp"></span>
+  <span id="who" style="color:var(--muted)"></span>
+  <button id="out" hidden>Вийти</button>
+</header>
+<main id="main">
+  <section class="login" id="login">
+    <h1>Вхід в адмінку</h1>
+    <p style="margin:0;color:var(--muted)">Лише для адміністратора сайту. Код прийде на пошту.</p>
+    <label class="sr" for="em">Пошта</label><input id="em" type="email" placeholder="Пошта адміністратора" autocomplete="email">
+    <button class="go" id="send">Надіслати код</button>
+    <div id="codebox" hidden style="display:grid;gap:8px"><label class="sr" for="code">Код</label><input id="code" inputmode="numeric" placeholder="Код із листа" autocomplete="one-time-code"><button class="go" id="verify">Увійти</button></div>
+    <p class="msg" id="lmsg" role="status"></p>
+  </section>
+  <section id="view" hidden></section>
+</main>
+<script src="../app/vendor/supabase.js"></script>
+<script>
+(function(){
+  'use strict';
+  const URL0 = 'https://rezraseoiznvflktyktj.supabase.co', KEY = 'sb_publishable_QY5BGXy4c_aSDvSh9riyuw_ChnE0_z3', API = URL0 + '/functions/v1/admin';
+  const $ = id => document.getElementById(id), el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e };
+  const dt = s => s ? new Date(s).toLocaleString('uk-UA', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'}) : '—';
+  const d = s => s ? new Date(s).toLocaleDateString('uk-UA') : '—';
+  const PLAN = {week:'Тиждень', month:'Місяць', year:'Рік', life:'Назавжди', promo:'Промокод', gift:'Подарунок'};
+  const sb = window.supabase.createClient(URL0, KEY, {auth:{persistSession:true, detectSessionInUrl:true, flowType:'implicit'}});
+  let TOKEN = '', tab = 'overview', email = '';
+
+  async function api(body){ const r = await fetch(API, {method:'POST', headers:{'content-type':'application/json', authorization:'Bearer ' + TOKEN}, body:JSON.stringify(body)}); const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.message || ('Помилка ' + r.status)); return j }
+  function msg(box, t, k){ box.textContent = t || ''; box.className = 'msg' + (k ? ' ' + k : '') }
+
+  /* ---------- вхід ---------- */
+  $('send').onclick = async () => { email = $('em').value.trim(); if (!email) return; $('send').disabled = true; const r = await sb.auth.signInWithOtp({email, options:{shouldCreateUser:false, emailRedirectTo:location.origin + location.pathname}}); $('send').disabled = false;
+    if (r.error) return msg($('lmsg'), 'Не вдалося: ' + r.error.message, 'bad'); $('codebox').hidden = false; msg($('lmsg'), 'Код надіслано. Можна також відкрити посилання з листа.', 'ok') };
+  $('verify').onclick = async () => { const r = await sb.auth.verifyOtp({email, token:$('code').value.replace(/\D/g, ''), type:'email'}); if (r.error) msg($('lmsg'), 'Код не підійшов.', 'bad') };
+  $('out').onclick = () => sb.auth.signOut();
+  sb.auth.onAuthStateChange((ev, s) => { TOKEN = s ? s.access_token : ''; const on = !!s; $('login').hidden = on; $('view').hidden = !on; $('tabs').hidden = !on; $('out').hidden = !on; $('who').textContent = on ? s.user.email : '';
+    if (location.hash.includes('access_token')) history.replaceState(null, '', location.pathname); if (on) show(tab) });
+  document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => show(b.dataset.t));
+
+  async function show(t){ tab = t; document.querySelectorAll('#tabs button').forEach(b => b.setAttribute('aria-selected', b.dataset.t === t)); const v = $('view'); v.replaceChildren(el('p', '', 'Завантажую…'));
+    try{ await ({overview, users, errors, leads, promos})[t](v) }catch(e){ v.replaceChildren(el('p', 'msg bad', e.message)) } }
+
+  /* ---------- огляд ---------- */
+  async function overview(v){ const o = await api({action:'overview'}); const C = (n, l, a) => { const c = el('div', 'card' + (a ? ' alert' : '')); c.append(el('b', '', String(n)), el('span', '', l)); return c };
+    const g = el('div', 'cards'); g.append(C(o.users, 'користувачів'), C(o.users_7d, 'нових за 7 днів'), C(o.active_subs, 'активних підписок'), C(o.paid_30d_uah + ' грн', 'оплати за 30 днів'), C(o.paid_total_uah + ' грн', 'оплати всього'), C(o.promo_uses, 'використали промокод'), C(o.ai_today, 'запитів до AI сьогодні'), C(o.leads_new + ' / ' + o.leads, 'нові / всі заявки ETEK', o.leads_new > 0), C(o.errors_24h, 'помилок за добу', o.errors_24h > 0), C(o.blocked, 'заблоковано'));
+    const bp = Object.entries(o.by_plan || {}).map(([k, n]) => (PLAN[k] || k) + ': ' + n).join(' · ');
+    v.replaceChildren(el('h1', '', 'Огляд'), g, el('h2', '', 'Активні підписки за тарифами'), el('p', '', bp || 'Поки немає.'));
+    const rf = el('button', '', 'Оновити'); rf.onclick = () => show('overview'); v.append(rf) }
+
+  /* ---------- користувачі ---------- */
+  async function users(v, q = ''){ const list = await api({action:'users', q, limit:100});
+    const tools = el('div', 'tools'), qi = el('input'); qi.type = 'search'; qi.placeholder = 'Пошук за поштою'; qi.value = q; qi.setAttribute('aria-label', 'Пошук за поштою'); const qb = el('button', '', 'Знайти'); qb.onclick = () => users(v, qi.value.trim()); qi.onkeydown = e => { if (e.key === 'Enter') qb.click() }; tools.append(qi, qb);
+    const m = el('p', 'msg'); m.setAttribute('role', 'status');
+    const t = el('table'), h = el('tr'); for (const x of ['Пошта', 'Зареєстр.', 'Останній вхід', 'Доступ', 'AI сьогодні', 'Оплатив', 'Стан', 'Дії']) h.append(el('th', '', x)); t.append(h);
+    for (const u of list){ const tr = el('tr'), active = u.paid_until && new Date(u.paid_until) > new Date();
+      const acc = el('td'); acc.append(el('span', 'tag' + (active ? ' ok' : ''), active ? (PLAN[u.plan] || u.plan || 'Pro') + (u.plan === 'life' ? '' : ' до ' + d(u.paid_until)) : 'без підписки')); if (u.promo) acc.append(el('div', '', 'промокод ' + u.promo));
+      const stt = el('td'); stt.append(el('span', 'tag ' + (u.blocked ? 'bad' : 'ok'), u.blocked ? 'заблоковано' : 'активний')); if (u.reason) stt.append(el('div', '', u.reason));
+      const a = el('td'), box = el('div', 'acts');
+      const bl = el('button', u.blocked ? '' : 'danger', u.blocked ? 'Розблокувати' : 'Заблокувати');
+      bl.onclick = async () => { let reason = ''; if (!u.blocked){ const r = el('input'); r.placeholder = 'Причина (видно лише тобі)'; r.setAttribute('aria-label', 'Причина блокування'); const ok = el('button', 'danger', 'Підтвердити блок'); box.replaceChildren(r, ok); r.focus(); ok.onclick = async () => { reason = r.value.trim(); ok.disabled = true; try{ await api({action:'block', user:u.id, block:true, reason}); msg(m, u.email + ' заблоковано: вхід закрито, доступ вимкнено.', 'ok'); users(v, qi.value.trim()) }catch(e){ msg(m, e.message, 'bad'); ok.disabled = false } }; return }
+        bl.disabled = true; try{ await api({action:'block', user:u.id, block:false}); msg(m, u.email + ' розблоковано.', 'ok'); users(v, qi.value.trim()) }catch(e){ msg(m, e.message, 'bad'); bl.disabled = false } };
+      const gs = el('select'); gs.setAttribute('aria-label', 'Подарувати днів'); for (const [k, l] of [['', 'Подарувати…'], ['3', '+3 дні'], ['7', '+7 днів'], ['30', '+30 днів'], ['365', '+1 рік']]) gs.append(new Option(l, k));
+      gs.onchange = async () => { if (!gs.value) return; try{ const r = await api({action:'grant', user:u.id, days:+gs.value}); msg(m, u.email + ': доступ до ' + d(r.paid_until), 'ok'); users(v, qi.value.trim()) }catch(e){ msg(m, e.message, 'bad') } };
+      box.append(bl, gs); a.append(box);
+      tr.append(el('td', '', u.email), el('td', 'num', d(u.created_at)), el('td', 'num', dt(u.last_sign_in_at)), acc, el('td', 'num', String(u.ai_today)), el('td', 'num', u.payments_uah ? u.payments_uah + ' грн' : '—'), stt, a); t.append(tr) }
+    if (!list.length){ const tr = el('tr'), td = el('td', '', 'Нікого не знайдено.'); td.colSpan = 8; tr.append(td); t.append(tr) }
+    const bx = el('div', 'box'); bx.append(t); v.replaceChildren(el('h1', '', 'Користувачі'), tools, m, bx) }
+
+  /* ---------- помилки ---------- */
+  async function errors(v){ const list = await api({action:'errors', limit:200});
+    const t = el('table'), h = el('tr'); for (const x of ['Останній раз', 'Разів', 'Помилка', 'Де', 'Хто']) h.append(el('th', '', x)); t.append(h);
+    for (const e of list){ const tr = el('tr'), m = el('td'); m.append(el('b', '', e.message)); if (e.stack){ const ds = el('details'), sm = el('summary', '', 'Подробиці'); ds.append(sm, el('pre', '', e.stack + (e.ua ? '\n\n' + e.ua : ''))); m.append(ds) }
+      tr.append(el('td', 'num', dt(e.last_at)), el('td', 'num', String(e.count)), m, el('td', '', (e.url || '') + (e.version ? ' · ' + e.version : '')), el('td', '', e.email || 'гість')); t.append(tr) }
+    if (!list.length){ const tr = el('tr'), td = el('td', '', 'Помилок не було.'); td.colSpan = 5; tr.append(td); t.append(tr) }
+    const bx = el('div', 'box'); bx.append(t); v.replaceChildren(el('h1', '', 'Помилки на сайті'), el('p', '', 'Однакові помилки за день зливаються в один рядок із лічильником.'), bx) }
+
+  /* ---------- заявки ---------- */
+  const ROLE = {electrician:'електрик', foreman:'прораб', shop:'магазин', wholesale:'опт', other:'інше'};
+  async function leads(v){ const list = await api({action:'leads', limit:300}); const m = el('p', 'msg');
+    const t = el('table'), h = el('tr'); for (const x of ['Коли', 'Хто', 'Телефон', 'Місто', 'Цікавить', 'Обсяг', 'Коментар', 'Статус']) h.append(el('th', '', x)); t.append(h);
+    for (const l of list){ const tr = el('tr'), st = el('select'); st.setAttribute('aria-label', 'Статус заявки'); for (const [k, x] of [['new', 'нова'], ['called', 'зателефонував'], ['deal', 'домовились'], ['no', 'відмова']]) st.append(new Option(x, k)); st.value = l.status;
+      st.onchange = async () => { try{ await api({action:'lead_status', id:l.id, status:st.value}); msg(m, 'Статус збережено.', 'ok') }catch(e){ msg(m, e.message, 'bad') } };
+      const tel = el('td'), a = el('a', '', l.phone); a.href = 'tel:' + String(l.phone).replace(/[^\d+]/g, ''); tel.append(a); const sc = el('td'); sc.append(st);
+      tr.append(el('td', 'num', dt(l.created_at)), el('td', '', l.name + ' · ' + (ROLE[l.role] || l.role)), tel, el('td', '', l.city || '—'), el('td', '', (l.interest || []).join(', ') || '—'), el('td', '', l.volume || '—'), el('td', '', l.comment || ''), sc); t.append(tr) }
+    if (!list.length){ const tr = el('tr'), td = el('td', '', 'Заявок ще немає.'); td.colSpan = 8; tr.append(td); t.append(tr) }
+    const bx = el('div', 'box'); bx.append(t); v.replaceChildren(el('h1', '', 'Заявки ETEK'), m, bx) }
+
+  /* ---------- промокоди ---------- */
+  async function promos(v){ const list = await api({action:'promos'}); const m = el('p', 'msg');
+    const f = el('div', 'form'), L = (t, inp) => { const l = el('label', '', t); l.append(inp); return l }, ci = el('input'), di = el('input'), mi = el('input'), ei = el('input'), ni = el('input'), sv = el('button', 'go', 'Зберегти код');
+    ci.placeholder = 'TIKTOK3'; di.type = 'number'; di.min = 1; di.max = 365; di.value = 3; mi.type = 'number'; mi.min = 1; mi.placeholder = 'без обмеження'; ei.type = 'date'; ni.placeholder = 'для чого код';
+    f.append(L('Код', ci), L('Днів доступу', di), L('Скільки разів', mi), L('Діє до', ei), L('Нотатка', ni), sv);
+    sv.onclick = async () => { sv.disabled = true; try{ await api({action:'promo_save', code:ci.value, days:+di.value, max:mi.value ? +mi.value : null, expires:ei.value ? new Date(ei.value + 'T23:59:59').toISOString() : null, note:ni.value}); promos(v) }catch(e){ msg(m, e.message, 'bad'); sv.disabled = false } };
+    const t = el('table'), h = el('tr'); for (const x of ['Код', 'Днів', 'Використано', 'Діє до', 'Нотатка', 'Стан', 'Посилання']) h.append(el('th', '', x)); t.append(h);
+    for (const p of list){ const tr = el('tr'), act = el('td'), b = el('button', p.active ? 'danger' : '', p.active ? 'Вимкнути' : 'Увімкнути');
+      b.onclick = async () => { b.disabled = true; try{ await api({action:'promo_save', code:p.code, days:p.days, max:p.max_uses, expires:p.expires_at, active:!p.active, note:p.note}); promos(v) }catch(e){ msg(m, e.message, 'bad'); b.disabled = false } };
+      act.append(el('span', 'tag ' + (p.active ? 'ok' : ''), p.active ? 'діє' : 'вимкнено'), ' ', b);
+      const link = location.origin + location.pathname.replace(/admin\/?(index\.html)?$/, '') + 'app/?promo=' + p.code, lk = el('td'), cp = el('button', '', 'Скопіювати'); cp.onclick = () => { try{ navigator.clipboard.writeText(link); msg(m, 'Скопійовано: ' + link, 'ok') }catch(e){ msg(m, link) } }; lk.append(cp);
+      tr.append(el('td', '', p.code), el('td', 'num', String(p.days)), el('td', 'num', p.used + (p.max_uses ? ' / ' + p.max_uses : '')), el('td', 'num', d(p.expires_at)), el('td', '', p.note || ''), act, lk); t.append(tr) }
+    const bx = el('div', 'box'); bx.append(t); v.replaceChildren(el('h1', '', 'Промокоди'), f, m, bx) }
+})();
+</script>
+</body>
+</html>
