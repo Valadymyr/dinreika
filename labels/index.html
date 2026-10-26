@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Наклейки на щиток — Дінрейка</title>
+<meta name="description" content="Наклейки на електрощиток за 2 хвилини: познач, що стоїть на рейці, підпиши голосом або кнопками, вибери стиль і друкуй на A4 або принтері етикеток Niimbot чи Brother.">
+<link rel="icon" href="../favicon.svg">
+<style>
+:root{--bench:#e4e8ec;--panel:#fff;--ink:#14212b;--muted:#5a6976;--line:#d0d7dd;--soft:#f1f4f6;--signal:#f2c200;--signal-ink:#231c00;--link:#0d5fa6;--bad:#b3261e;--ok:#1f7a4d;--warn:#9a6400;
+  --g0:#3d4f5d;--g1:#0d6fb8;--g2:#1b7a4b;--g3:#c2410c;--g4:#7a3fb0;--g5:#b0297a;--g6:#0f8a8a;
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--display:"Segoe UI",system-ui,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bench:#141a1f;--panel:#1d252c;--ink:#e8eef2;--muted:#9aa8b4;--line:#33404b;--soft:#252f38;--link:#6db8f2;--bad:#f2867f;--ok:#5fc48f;color-scheme:dark}}
+:root[data-theme="dark"]{--bench:#141a1f;--panel:#1d252c;--ink:#e8eef2;--muted:#9aa8b4;--line:#33404b;--soft:#252f38;--link:#6db8f2;--bad:#f2867f;--ok:#5fc48f;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bench);color:var(--ink);font:15px/1.45 var(--ui)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:8px 12px;font-weight:600;min-height:40px}
+button.go{background:var(--signal);border-color:var(--signal);color:var(--signal-ink)}
+button[aria-pressed=true]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+input,select,textarea{max-width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;background:var(--panel);min-height:40px;min-width:0;font-size:16px}
+a{color:var(--link)}
+.sr{position:absolute;left:-9999px}
+header.top{position:sticky;top:0;z-index:30;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;text-decoration:none;color:var(--ink)}
+.brand i{width:32px;height:32px;border-radius:8px;background:var(--signal);display:grid;place-items:center}
+.sp{flex:1}
+main{max-width:1180px;margin:0 auto;padding:16px 16px 120px;display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+.card{min-width:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.card h2{margin:0 0 4px;font-size:18px}.card > p.note{margin:0 0 12px;color:var(--muted);font-size:14px}
+.steps{display:flex;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted)}.steps b{color:var(--ink)}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label.f{display:grid;gap:4px;font-size:13px;font-weight:600;color:var(--muted)}
+/* рейка */
+.rowh{display:flex;align-items:center;gap:8px;margin:14px 0 6px;font-size:13px;font-weight:700;color:var(--muted)}
+.rowh .cnt{font-family:var(--mono);font-weight:500}.rowh .cnt.over{color:var(--bad);font-weight:700}
+.railw{overflow-x:auto;padding:6px 2px 10px;-webkit-overflow-scrolling:touch}
+.rail{position:relative;display:flex;align-items:stretch;gap:0;min-height:96px;padding:6px;border-radius:8px;background:linear-gradient(#c9d0d5,#8e999f) 0 50%/100% 22px no-repeat,var(--soft);width:max-content;min-width:100%}
+.dev{position:relative;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:6px 3px;border:1px solid #b9c2c8;border-radius:5px;background:#fff;color:#14212b;min-height:84px;text-align:center;font-weight:600;font-size:11px;line-height:1.15;cursor:pointer;overflow:hidden}
+.dev::before{content:'';position:absolute;left:0;right:0;top:0;height:4px;background:var(--gc,var(--g0))}
+.dev svg{width:20px;height:20px;flex:none;color:var(--gc,#3d4f5d);margin-top:4px}
+.dev .r{font-family:var(--mono);font-size:10px;color:#5a6976}
+.dev .n{word-break:break-word;hyphens:auto;max-height:3.5em;overflow:hidden}
+.dev.empty .n{color:#b3261e}
+.dev[aria-pressed=true]{outline:3px solid var(--link);outline-offset:1px;z-index:2;background:#fff;color:#14212b;border-color:#b9c2c8}
+.free{flex:none;border:1px dashed #8e999f;border-radius:5px;display:grid;place-items:center;color:#5a6976;font-size:11px;min-height:84px;background:rgba(255,255,255,.4)}
+.addbar{display:flex;flex-wrap:wrap;gap:6px}
+@media (max-width:740px){.addbar{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}.addbar button{flex:none}}
+.addbar button{min-height:38px;padding:6px 10px;font-size:13px;display:inline-flex;align-items:center;gap:6px}
+.addbar button svg{width:16px;height:16px}
+/* редактор апарата */
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--panel);border-top:1px solid var(--line);box-shadow:0 -12px 34px rgba(0,0,0,.25);border-radius:16px 16px 0 0;padding:10px 16px calc(16px + env(safe-area-inset-bottom,0px));max-height:72vh;overflow:auto;transform:translateY(105%);transition:transform .2s ease;visibility:hidden}
+.sheet.on{transform:none;visibility:visible}
+.sheet .grab{width:40px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 8px}
+.sheet .hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}.sheet .hd h3{margin:0;font-size:17px;flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+.chips button{min-height:36px;padding:5px 11px;font-size:13px;font-weight:600;border-radius:99px}
+.chips.rt button{font-family:var(--mono)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.lbl{font-size:12px;font-weight:700;color:var(--muted);margin:8px 0 2px;text-transform:uppercase;letter-spacing:.03em}
+@media (min-width:900px){.sheet{left:auto;right:16px;bottom:16px;width:420px;border-radius:16px;border:1px solid var(--line);max-height:calc(100vh - 100px)}}
+/* голос */
+.voice{display:grid;gap:8px}.voice textarea{min-height:70px;resize:vertical}
+.mic.rec{background:var(--bad);border-color:var(--bad);color:#fff}
+/* теми */
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.theme{display:grid;gap:6px;padding:8px;text-align:left;border-radius:12px}
+.theme[aria-pressed=true]{background:var(--soft);color:var(--ink);border:2px solid var(--signal)}
+.theme .tn{font-size:13px;font-weight:700}.theme .td{font-size:12px;color:var(--muted);font-weight:500}
+.theme .mini{height:34px;border-radius:4px;overflow:hidden;border:1px solid #ccd3d8}
+/* наклейки: спільні для перегляду, друку і PNG */
+.strip{display:flex;width:max-content;border:0.2mm solid #9aa5ad;background:#fff;color:#111;overflow:hidden;font-family:Arial,Helvetica,sans-serif}
+.cell{position:relative;flex:none;border-right:0.2mm dashed #9aa5ad;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden;padding:0.4mm 0.5mm;line-height:1.05}
+.cell:last-child{border-right:0}
+.cell .ic{flex:none}.cell .ic svg{width:100%;height:100%}
+.cell .nm{font-weight:700;word-break:break-word;hyphens:auto}
+.cell .rt{font-weight:400;opacity:.85;white-space:nowrap}
+.cell .ds{position:absolute;left:0.5mm;top:0.3mm;font-weight:700;opacity:.7}
+.cell.blank{background:repeating-linear-gradient(45deg,transparent 0 1.2mm,rgba(0,0,0,.05) 1.2mm 2.4mm)}
+.t-classic .cell{background:#fff;color:#111}
+.t-color .cell{background:#fff;color:#111;border-top:1.6mm solid var(--gc)}
+.t-color .cell .ic{color:var(--gc)}
+.t-icons .cell .ic{color:var(--gc)}
+.t-dark.strip{background:#14191d;border-color:#14191d}.t-dark .cell{background:#14191d;color:#f2f4f5;border-right-color:#55616b}.t-dark .cell .ic{color:#f2c200}
+.t-contrast.strip{background:#ffd400;border-color:#111}.t-contrast .cell{background:#ffd400;color:#000;border-right:0.4mm solid #000}.t-contrast .cell .nm{font-weight:900;text-transform:uppercase}
+.t-minimal .cell .nm{font-weight:500}.t-minimal .cell{border-right-style:dotted}
+.t-brand .cell{border-bottom:1.2mm solid var(--gc)}
+.cell.brandtag{background:#14212b;color:#fff;font-weight:700}.cell.brandtag .nm{font-weight:700}
+.preview{display:grid;gap:10px;overflow-x:auto;padding:4px 0}
+.preview .no{font-size:12px;color:var(--muted);font-weight:700;margin:0}
+.outrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.msg{min-height:1.3em;font-weight:600;margin:6px 0 0}.msg.bad{color:var(--bad)}.msg.ok{color:var(--ok)}
+.saved{font-size:12px;color:var(--ok);font-weight:600}
+.hide{display:none!important}
+#btn-acc{min-height:38px}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../"><i><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 1.5 3.5 9h4l-1 5.5 6-7.5h-4z" fill="#231c00"/></svg></i>Наклейки на щиток</a>
+  <span class="saved" id="saved" role="status">Збережено</span>
+  <span class="sp"></span>
+  <a href="../app/" style="font-weight:600;text-decoration:none">Повний симулятор →</a>
+  <span id="btn-pro" hidden></span>
+</header>
+<main>
+  <section class="card">
+    <h2>1. Що стоїть у щиті</h2>
+    <p class="note">Познач апарати зліва направо, як на рейці. Ширину, номінал і назву потім можна змінити, натиснувши на апарат.</p>
+    <div class="grid4">
+      <label class="f" for="rows">Рядів у щиті<select id="rows"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select></label>
+      <label class="f" for="mods">Модулів у ряду<select id="mods"><option>4</option><option>6</option><option>8</option><option>12</option><option>13</option><option>14</option><option>16</option><option>18</option><option>24</option></select></label>
+      <label class="f" for="name">Назва щита<input id="name" maxlength="50" placeholder="Квартира, вул. Садова 5"></label>
+    </div>
+    <div id="rails"></div>
+    <p class="msg" id="railmsg" role="status"></p>
+  </section>
+
+  <section class="card">
+    <h2>2. Підписати все разом</h2>
+    <p class="note">Продиктуй або напиши назви через кому, по черзі зліва направо, ряд за рядом. Наприклад: «ввід, реле напруги, ПЗВ розетки, кухня, спальня, вітальня, ПЗВ світло, світло кімнати».</p>
+    <div class="voice">
+      <label class="sr" for="bulk">Назви через кому</label>
+      <textarea id="bulk" placeholder="ввід, реле напруги, ПЗВ розетки, кухня, спальня…"></textarea>
+      <div class="btns"><button type="button" class="mic" id="mic" hidden>🎤 Диктувати</button><button type="button" class="go" id="bulkgo">Розставити назви</button><label class="f" style="display:flex;align-items:center;gap:6px;font-weight:600"><input type="checkbox" id="bulkempty" checked style="min-height:0">тільки непідписані</label></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. Стиль наклейок</h2>
+    <div class="themes" id="themes" role="group" aria-label="Стиль наклейок"></div>
+    <div class="grid4" style="margin-top:12px">
+      <label class="f" for="pitch">Крок модуля<select id="pitch"><option value="17.5">17,5 мм (Hager, Eaton, ABB, Schneider)</option><option value="18">18 мм (ETEK, IEK, більшість китайських)</option></select></label>
+      <label class="f" for="hgt">Висота наклейки<select id="hgt"><option value="9">9 мм</option><option value="12" selected>12 мм</option><option value="15">15 мм</option><option value="18">18 мм</option><option value="20">20 мм</option></select></label>
+      <label class="f" for="fs">Розмір тексту<select id="fs"><option value="0.85">менший</option><option value="1" selected>звичайний</option><option value="1.2">більший</option></select></label>
+    </div>
+    <div class="btns" style="margin-top:10px">
+      <label class="f" style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="o-ico" checked style="min-height:0">значок</label>
+      <label class="f" style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="o-rate" checked style="min-height:0">номінал</label>
+      <label class="f" style="display:flex;align-items:center;gap:6px"><input type="checkbox" id="o-des" style="min-height:0">позначення QF1</label>
+    </div>
+    <div class="grid4" id="brandbox" style="margin-top:10px">
+      <label class="f" for="b-name">Твоє ім'я або фірма<input id="b-name" maxlength="30" placeholder="Електрик Володимир"></label>
+      <label class="f" for="b-tel">Телефон<input id="b-tel" maxlength="20" inputmode="tel" placeholder="+380…"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>4. Перегляд і друк</h2>
+    <p class="note">Наклейки друкуються в масштабі 1:1. У вікні друку постав масштаб 100 % («Фактичний розмір»).</p>
+    <div class="preview" id="preview"></div>
+    <div class="outrow" style="margin-top:12px">
+      <button type="button" class="go" id="print">Друкувати на A4</button>
+      <label class="f" for="tape" style="flex:1 1 240px;max-width:100%">Принтер етикеток<select id="tape" style="width:100%">
+        <option value="brother-12">Стрічка 12 мм (Brother P-touch, Dymo)</option><option value="brother-18">Стрічка 18 мм (Brother P-touch, Dymo)</option><option value="niimbot-1240">Niimbot D11 / D110, етикетки 12×40</option><option value="niimbot-1550">Niimbot, етикетки 15×50</option></select></label>
+      <button type="button" id="png">Завантажити PNG</button>
+    </div>
+    <p class="msg" id="outmsg" role="status"></p>
+  </section>
+</main>
+
+<section class="sheet" id="sheet" aria-label="Апарат" aria-hidden="true">
+  <div class="grab"></div>
+  <div class="hd"><h3 id="sh-t">Апарат</h3><button type="button" id="sh-x">Готово</button></div>
+  <label class="f" for="sh-name">Що живить або для чого<input id="sh-name" maxlength="40" placeholder="наприклад, Розетки кухня"></label>
+  <div class="lbl">Що</div><div class="chips" id="sh-what"></div>
+  <div class="lbl">Де</div><div class="chips" id="sh-where"></div>
+  <div class="lbl">Номінал</div><div class="chips rt" id="sh-rate"></div>
+  <div class="two">
+    <label class="f" for="sh-rate2">Свій номінал<input id="sh-rate2" maxlength="16" placeholder="C16, 40 A 30 мА"></label>
+    <label class="f" for="sh-w">Ширина, модулів<select id="sh-w"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>8</option></select></label>
+  </div>
+  <div class="lbl">Дії</div>
+  <div class="btns"><button type="button" id="sh-l" aria-label="Пересунути ліворуч">←</button><button type="button" id="sh-r" aria-label="Пересунути праворуч">→</button><button type="button" id="sh-dup">Дублювати</button><button type="button" id="sh-del" style="color:var(--bad);border-color:var(--bad)">Видалити</button></div>
+</section>
+
+<script src="../app/vendor/supabase.js"></script>
+<script src="../app/account.js"></script>
+<script>
+(function(){
+'use strict';
+const ICO = {
+  socket:['Розетки', '<circle class="t" cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.6"/><circle cx="9.7" cy="12" r="1.05" fill="currentColor" stroke="none"/><circle cx="14.3" cy="12" r="1.05" fill="currentColor" stroke="none"/><path d="M12 3v2.2M12 18.8V21"/>'],
+  light:['Освітлення', '<path class="t" d="M12 2.8a6.2 6.2 0 0 0-3.7 11.2c.8.6 1.2 1.3 1.2 2.2h5c0-.9.4-1.6 1.2-2.2A6.2 6.2 0 0 0 12 2.8z"/><path d="M9.6 18.6h4.8M10.6 21h2.8M12 16.2v-4.4l-1.8-1.8M12 11.8l1.8-1.8"/>'],
+  washer:['Пральна або сушильна машина', '<rect class="t" x="4.2" y="2.8" width="15.6" height="18.4" rx="2.2"/><path d="M4.2 7.4h15.6"/><circle cx="12" cy="14" r="4.4"/><path d="M8.6 14.6c1.1-1 2.2 1 3.4 0s2.3-1 3.4 0"/><circle cx="7" cy="5.1" r=".8" fill="currentColor" stroke="none"/><path d="M13.5 5.1h3.6"/>'],
+  boiler:['Бойлер, котел', '<rect class="t" x="6.6" y="2.4" width="10.8" height="16" rx="5.2"/><path d="M9.6 18.4v3.2M14.4 18.4v3.2M6.6 7.6h10.8"/><circle cx="12" cy="12.6" r="2.6"/><path d="M12 12.6l1.3-1.3"/>'],
+  oven:['Духова шафа', '<rect class="t" x="3.6" y="3.2" width="16.8" height="17.6" rx="2.2"/><path d="M3.6 8.2h16.8M7.2 12h9.6"/><rect x="6.6" y="10.4" width="10.8" height="7.6" rx="1.2"/><circle cx="7.2" cy="5.7" r=".8" fill="currentColor" stroke="none"/><circle cx="10" cy="5.7" r=".8" fill="currentColor" stroke="none"/><path d="M14 5.7h3"/>'],
+  hob:['Варильна поверхня, плита', '<rect class="t" x="2.8" y="4.2" width="18.4" height="15.6" rx="2.4"/><circle cx="8.2" cy="9.2" r="2.5"/><circle cx="8.2" cy="9.2" r=".7" fill="currentColor" stroke="none"/><circle cx="15.8" cy="9.2" r="2.5"/><circle cx="15.8" cy="9.2" r=".7" fill="currentColor" stroke="none"/><circle cx="8.2" cy="15.6" r="1.6"/><circle cx="15.8" cy="15.6" r="1.6"/>'],
+  ac:['Кондиціонер', '<rect class="t" x="2.6" y="4.4" width="18.8" height="8.4" rx="2.4"/><path d="M5.6 9.8h12.8M17 7h1.400M7.4 15.600c0 1.7-1.2 2-1.2 3.800M12 15.600v4.200M16.6 15.600c0 1.7 1.2 2 1.2 3.8"/>'],
+  fridge:['Холодильник', '<rect class="t" x="5.6" y="2.4" width="12.8" height="19.2" rx="2.2"/><path d="M5.6 9.400h12.8M8.8 5v2.200M8.8 12v3.6"/>'],
+  dish:['Посудомийна машина', '<rect class="t" x="4.2" y="2.8" width="15.6" height="18.4" rx="2.2"/><path d="M4.2 7.400h15.600M13.5 5.100h3.6"/><path d="M7.6 17.800a4.4 4.4 0 0 1 8.8 0M9.8 17.800a2.2 2.2 0 0 1 4.4 0M7 17.800h10M12 10v1.400M9 10.800l.7 1.200M15 10.800l-.7 1.2"/><circle cx="7" cy="5.1" r=".8" fill="currentColor" stroke="none"/>'],
+  heat:['Тепла підлога, обігрівач', '<rect class="t" x="2.8" y="2.8" width="18.4" height="18.4" rx="3"/><path d="M6.4 7.200h9.800a2.4 2.4 0 0 1 0 4.800H7.800a2.4 2.4 0 0 0 0 4.800h9.8"/>'],
+  pump:['Насос, вентилятор, двигун', '<circle class="t" cx="12" cy="12" r="9"/><path d="M12 12c0-3.2 1.6-4.8 3.8-4.8 0 2.7-1.1 4.8-3.8 4.800zM12 12c2.8 1.6 3.4 3.8 2.3 5.7-2.3-1.4-3.6-3.3-2.3-5.700zM12 12c-2.8 1.6-5 1.1-6.1-.9 2.3-1.4 4.7-1.5 6.1.9z"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/>'],
+  micro:['Мікрохвильова, дрібна техніка', '<rect class="t" x="2.4" y="5.2" width="19.2" height="13.6" rx="2.2"/><rect x="5" y="7.8" width="9.8" height="8.4" rx="1.2"/><path d="M18 9.200v.010M18 12v.010M18 14.800v.010" stroke-width="2.2"/>'],
+  tv:['Телевізор, комп\'ютер, мережа', '<rect class="t" x="2.8" y="4.2" width="18.4" height="12" rx="1.8"/><path d="M8.4 20.200h7.200M12 16.200v4"/>'],
+  plug:['Зарядка, окрема лінія', '<path class="t" d="M6 7.600h12v3.400a6 6 0 0 1-12 0z"/><path d="M9 2.600v5M15 2.600v5M12 17v4.4"/>'],
+  bolt:['Інше', '<path class="t" d="M13.6 2.4 5.4 13.600h5.600l-1 8 8.6-11.200h-5.600z"/>'],
+  main:['Ввід, головний вимикач', '<circle class="t" cx="12" cy="12.6" r="8.6"/><path d="M12 2.800v8.400M7.4 6.800a7 7 0 1 0 9.2 0"/>'],
+  vrelay:['Реле напруги', '<rect class="t" x="3" y="4" width="18" height="16" rx="2.4"/><path d="M8 9l4 7.200L16 9M6.4 6.800h2.4"/>'],
+  rcd:['ПЗВ, захист від витоку', '<path class="t" d="M12 2.6 4.6 5.600v5.800c0 4.6 3 7.8 7.4 9.8 4.4-2 7.4-5.2 7.4-9.800V5.600z"/><path d="m8.6 12 2.4 2.4 4.4-4.8"/>'],
+  block:['Розподіл', '<rect class="t" x="3" y="3.4" width="18" height="17.2" rx="2.4"/><path d="M12 6.400v5.200M6.8 16.800v-3a2.2 2.2 0 0 1 2.2-2.200h6a2.2 2.2 0 0 1 2.2 2.200v3M12 11.600v5.2"/><circle cx="12" cy="6.4" r="1.2" fill="currentColor" stroke="none"/>'],
+  spd:['Захист від перенапруг', '<path class="t" d="M13 2.4 6.4 11.600h4.800l-1 5.2 6.4-8.400h-4.600z"/><path d="M5.6 19.200h12.800M8.2 21.600h7.6"/>'],
+  contactor:['Контактор', '<rect class="t" x="4" y="3.2" width="16" height="17.6" rx="2.2"/><path d="M8 7.200v3.200l3.2 3.200M8 17v-3.400M16 7.200v9.8"/>'],
+  change:['Перемикач мережа / резерв', '<path class="t" d="M3.4 4.400h17.200v15.200H3.400z"/><path d="M6.4 9h10.400l-2.4-2.400M17.6 15H7.200l2.4 2.4"/>'],
+  term:['Клеми', '<rect class="t" x="6.4" y="2.8" width="11.2" height="18.4" rx="2"/><circle cx="12" cy="7.4" r="1.8"/><circle cx="12" cy="16.6" r="1.8"/><path d="M12 9.200v5.6"/>']};
+const $ = id => document.getElementById(id), el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e };
+const svg = k => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICO[k] || ICO.bolt)[1].replace(/class="t"/g, 'fill="currentColor" fill-opacity=".14"') + '</svg>';
+const KW = [[/розет/, 'socket'], [/світл|освітл|ламп|люстр|підсвіт/, 'light'], [/посудом/, 'dish'], [/пральн|сушил/, 'washer'], [/бойлер|водонагр|котел|котьол/, 'boiler'], [/духов/, 'oven'], [/варил|плит|індукц/, 'hob'], [/кондиц|спліт/, 'ac'], [/холодил|морозил/, 'fridge'], [/підлог|обігрів|конвект|радіат|рушник/, 'heat'], [/насос|вентил|двигун|ворота|витяж/, 'pump'], [/мікрохв|чайник|кавов|тостер/, 'micro'], [/телев|комп|роутер|інтернет|\bтв\b|сервер/, 'tv'], [/заряд|гараж|майстерн/, 'plug'], [/ввід|вводн|головн/, 'main'], [/реле напр/, 'vrelay'], [/пзв|узо/, 'rcd'], [/пзіп|узіп|грози|перенапр/, 'spd'], [/генерат|резерв|перемик/, 'change'], [/контактор/, 'contactor'], [/клем|розпод/, 'block']];
+const TYPES = {
+  main:{n:'Ввід', w:2, r:'40 A', ico:'main', des:'QS'},
+  vrelay:{n:'Реле напруги', w:2, r:'', ico:'vrelay', des:'KV'},
+  change:{n:'Мережа / генератор', w:2, r:'I-0-II', ico:'change', des:'QS'},
+  rcd:{n:'ПЗВ', w:2, r:'40 A 30 мА', ico:'rcd', des:'QD', head:true},
+  mcb:{n:'', w:1, r:'C16', ico:null, des:'QF'},
+  rcbo:{n:'', w:2, r:'C16 30 мА', ico:null, des:'QFD'},
+  spd:{n:'Захист від грози', w:2, r:'', ico:'spd', des:'FV'},
+  km:{n:'Контактор', w:1, r:'', ico:'contactor', des:'KM'},
+  term:{n:'Розподіл', w:2, r:'', ico:'block', des:'XT'},
+  blank:{n:'Резерв', w:1, r:'', ico:null, des:''}
+};
+const ADD = [['main', 'Ввід'], ['vrelay', 'Реле напруги'], ['change', 'Перемикач I-0-II'], ['rcd', 'ПЗВ'], ['mcb', 'Автомат 1P'], ['mcb2', 'Автомат 2P'], ['mcb3', 'Автомат 3P'], ['rcbo', 'Дифавтомат'], ['rcbo1', 'Дифавтомат 1 мод.'], ['spd', 'ПЗІП'], ['km', 'Контактор'], ['term', 'Клеми'], ['blank', 'Резерв / порожньо']];
+const WHAT = ['Розетки', 'Світло', 'Бойлер', 'Котел', 'Варильна', 'Духова шафа', 'Пральна', 'Посудомийна', 'Кондиціонер', 'Тепла підлога', 'Холодильник', 'Насос', 'Ворота', 'Інвертор', 'Зарядка авто', 'Резерв'];
+const WHERE = ['кухня', 'вітальня', 'спальня', 'дитяча', 'ванна', 'санвузол', 'коридор', 'кабінет', 'гараж', 'підвал', 'двір', 'горище', '1 поверх', '2 поверх'];
+const RATES = {def:['B6', 'B10', 'B16', 'C6', 'C10', 'C16', 'C20', 'C25', 'C32', 'C40', 'C50', 'C63'], rcd:['25 A 30 мА', '40 A 30 мА', '63 A 30 мА', '40 A 100 мА', '40 A 300 мА'], main:['25 A', '32 A', '40 A', '50 A', '63 A', '80 A', '100 A'], rcbo:['C10 30 мА', 'C16 30 мА', 'C20 30 мА', 'C25 30 мА', 'C32 30 мА']};
+const THEMES = [['classic', 'Класика', 'біла, чорний текст'], ['color', 'Кольорова', 'кожна група свого кольору'], ['icons', 'Зі значками', 'великі значки, видно здалеку'], ['dark', 'Темна', 'для чорних щитів'], ['contrast', 'Контрастна', 'жовта, великий шрифт'], ['minimal', 'Мінімал', 'лише назва'], ['brand', 'Брендована', 'з твоїм іменем і телефоном']];
+const GC = ['#3d4f5d', '#0d6fb8', '#1b7a4b', '#c2410c', '#7a3fb0', '#b0297a', '#0f8a8a'];
+let S = load() || demo(), sel = null, seq = 1 + Math.max(0, ...S.rows.flat().map(d => d.id || 0));
+
+function demo(){ let i = 1; const d = (t, n, r, w) => ({id:i++, t, n:n || TYPES[t].n, r:r != null ? r : TYPES[t].r, w:w || TYPES[t].w});
+  return {name:'', rowsN:3, mods:12, theme:'color', pitch:'17.5', h:'12', fs:'1', ico:true, rate:true, des:false, bname:'', btel:'',
+    rows:[[d('main', 'Ввід', '40 A'), d('vrelay'), d('change'), d('spd')], [d('rcd', 'ПЗВ розетки'), d('mcb', 'Розетки кухня'), d('mcb', 'Розетки вітальня'), d('mcb', 'Розетки спальня'), d('mcb', 'Кондиціонер'), d('rcd', 'ПЗВ світло', '25 A 30 мА'), d('mcb', 'Світло кімнати', 'B10'), d('mcb', 'Світло кухня, коридор', 'B10')], [d('rcbo', 'Пральна'), d('rcbo', 'Бойлер'), d('rcbo', 'Духова шафа'), d('rcbo', 'Варильна', 'C32 30 мА')]]} }
+function load(){ try{ const s = JSON.parse(localStorage.getItem('dr-labels1')); if (s && Array.isArray(s.rows)) return s }catch(e){} return null }
+function save(){ try{ localStorage.setItem('dr-labels1', JSON.stringify(S)); $('saved').textContent = 'Збережено'; $('saved').style.color = '' }catch(e){ $('saved').textContent = 'Не збережено'; $('saved').style.color = 'var(--bad)' } }
+
+/* групи: після ПЗВ автомати фарбуються його кольором до наступного ПЗВ; ввідні апарати сірі */
+function groups(){ const out = {}; let g = 0, ci = 0, hn = ''; HEADN = {}; for (const row of S.rows) for (const d of row){ HEADN[d.id] = hn; if (TYPES[d.t].head){ ci = 1 + (g++ % (GC.length - 1)); out[d.id] = ci; hn = d.n || '' } else if (['main', 'vrelay', 'change', 'spd', 'term', 'blank'].includes(d.t)) out[d.id] = 0; else if (d.t === 'rcbo'){ out[d.id] = ci || (1 + (g++ % (GC.length - 1))) } else out[d.id] = ci } return out }
+function desig(){ const c = {}, out = {}; for (const row of S.rows) for (const d of row){ const p = TYPES[d.t].des; if (!p) continue; c[p] = (c[p] || 0) + 1; out[d.id] = p + c[p] } return out }
+let HEADN = {};
+const icoOf = d => { const t = (d.n || '').toLowerCase(), hit = KW.find(q => q[0].test(t)); if (hit) return hit[1]; if (TYPES[d.t].ico) return TYPES[d.t].ico; const h = (HEADN[d.id] || '').toLowerCase(), h2 = KW.find(q => q[0].test(h) && !['rcd'].includes(q[1])); return h2 ? h2[1] : 'bolt' };
+const used = row => row.reduce((s, d) => s + d.w, 0);
+
+/* ---------- рейки ---------- */
+function renderRails(){ const box = $('rails'); box.replaceChildren(); const G = groups(), D = desig();
+  while (S.rows.length < S.rowsN) S.rows.push([]);
+  S.rows.slice(0, S.rowsN).forEach((row, ri) => { const u = used(row), h = el('div', 'rowh'); h.append(el('span', '', 'Ряд ' + (ri + 1)), el('span', 'cnt' + (u > S.mods ? ' over' : ''), u + ' / ' + S.mods + ' мод.' + (u > S.mods ? ' — не влазить' : '')));
+    const w = el('div', 'railw'), r = el('div', 'rail'); r.setAttribute('role', 'list'); r.setAttribute('aria-label', 'Ряд ' + (ri + 1));
+    for (const d of row){ const b = el('button', 'dev' + (!d.n && d.t !== 'blank' ? ' empty' : '')); b.type = 'button'; b.style.width = (d.w * 52 - 2) + 'px'; b.style.marginRight = '2px'; b.style.setProperty('--gc', GC[G[d.id]]); b.setAttribute('aria-pressed', sel === d.id); b.setAttribute('role', 'listitem');
+      b.setAttribute('aria-label', (D[d.id] || '') + ' ' + (d.n || 'без назви') + ' ' + (d.r || ''));
+      if (d.t !== 'blank') b.insertAdjacentHTML('beforeend', svg(icoOf(d))); b.append(el('span', 'r', d.r || (D[d.id] || '')), el('span', 'n', d.n || (d.t === 'blank' ? 'резерв' : 'підписати')));
+      b.onclick = () => openSheet(d.id); r.append(b) }
+    if (u < S.mods){ const f = el('div', 'free', 'вільно ' + (S.mods - u)); f.style.width = ((S.mods - u) * 52 - 2) + 'px'; r.append(f) }
+    w.append(r);
+    const ab = el('div', 'addbar'); for (const [k, t] of ADD){ const b = el('button'); b.type = 'button'; const base = k.replace(/\d$/, ''); if (TYPES[base].ico) b.insertAdjacentHTML('beforeend', svg(TYPES[base].ico)); b.append('+ ' + t); b.onclick = () => add(ri, k); ab.append(b) }
+    box.append(h, w, ab) });
+}
+function add(ri, k){ const base = k.replace(/\d$/, ''), T = TYPES[base], d = {id:seq++, t:base, n:T.n, r:T.r, w:T.w};
+  if (k === 'mcb2'){ d.w = 2 } if (k === 'mcb3'){ d.w = 3 } if (k === 'rcbo1'){ d.w = 1 }
+  S.rows[ri].push(d); if (used(S.rows[ri]) > S.mods) $('railmsg').textContent = 'Ряд ' + (ri + 1) + ' переповнений: прибери щось або збільш кількість модулів.'; else $('railmsg').textContent = '';
+  all(); if (!d.n || base === 'mcb' || base === 'rcbo') openSheet(d.id) }
+function find(id){ for (const row of S.rows){ const i = row.findIndex(d => d.id === id); if (i >= 0) return [row, i] } return [null, -1] }
+
+/* ---------- картка апарата ---------- */
+function openSheet(id){ sel = id; const [row, i] = find(id); if (!row) return; const d = row[i], D = desig(); $('sh-t').textContent = (D[d.id] ? D[d.id] + ' · ' : '') + ({main:'Ввід', vrelay:'Реле напруги', change:'Перемикач', rcd:'ПЗВ', mcb:'Автомат', rcbo:'Дифавтомат', spd:'ПЗІП', km:'Контактор', term:'Клеми', blank:'Резерв'})[d.t];
+  $('sh-name').value = d.n || ''; $('sh-rate2').value = d.r || ''; $('sh-w').value = String(d.w);
+  const chips = (box, list, fn, on) => { box.replaceChildren(); for (const x of list){ const b = el('button', '', x); b.type = 'button'; b.setAttribute('aria-pressed', on(x)); b.onclick = () => fn(x); box.append(b) } };
+  chips($('sh-what'), d.t === 'rcd' ? ['ПЗВ розетки', 'ПЗВ світло', 'ПЗВ волога зона', 'ПЗВ кухня', 'ПЗВ загальне'] : WHAT, x => { const where = (d.n || '').match(/ (кухня|вітальня|спальня|дитяча|ванна|санвузол|коридор|кабінет|гараж|підвал|двір|горище|\d поверх)$/); d.n = x + (where && d.t !== 'rcd' ? where[0] : ''); upd() }, x => (d.n || '').startsWith(x));
+  chips($('sh-where'), WHERE, x => { const base = (d.n || '').replace(/ (кухня|вітальня|спальня|дитяча|ванна|санвузол|коридор|кабінет|гараж|підвал|двір|горище|\d поверх)$/, ''); d.n = (base ? base + ' ' : '') + x; if (!base) d.n = x[0].toUpperCase() + x.slice(1); upd() }, x => (d.n || '').endsWith(' ' + x));
+  chips($('sh-rate'), d.t === 'rcd' ? RATES.rcd : d.t === 'main' ? RATES.main : d.t === 'rcbo' ? RATES.rcbo : RATES.def, x => { d.r = x; upd() }, x => d.r === x);
+  $('sheet').classList.add('on'); $('sheet').setAttribute('aria-hidden', 'false'); renderRails();
+  function upd(){ $('sh-name').value = d.n; $('sh-rate2').value = d.r; all(); openSheet(d.id) } }
+function closeSheet(){ sel = null; $('sheet').classList.remove('on'); $('sheet').setAttribute('aria-hidden', 'true'); renderRails() }
+$('sh-x').onclick = closeSheet;
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && sel != null) closeSheet() });
+$('sh-name').oninput = () => { const [row, i] = find(sel); if (!row) return; row[i].n = $('sh-name').value; all(true) };
+$('sh-rate2').oninput = () => { const [row, i] = find(sel); if (!row) return; row[i].r = $('sh-rate2').value; all(true) };
+$('sh-w').onchange = () => { const [row, i] = find(sel); if (!row) return; row[i].w = +$('sh-w').value; all() };
+$('sh-l').onclick = () => { const [row, i] = find(sel); if (row && i > 0){ [row[i - 1], row[i]] = [row[i], row[i - 1]]; all() } else if (row){ const ri = S.rows.indexOf(row); if (ri > 0){ S.rows[ri - 1].push(row.splice(i, 1)[0]); all() } } };
+$('sh-r').onclick = () => { const [row, i] = find(sel); if (row && i < row.length - 1){ [row[i + 1], row[i]] = [row[i], row[i + 1]]; all() } else if (row){ const ri = S.rows.indexOf(row); if (ri < S.rowsN - 1){ S.rows[ri + 1].unshift(row.splice(i, 1)[0]); all() } } };
+$('sh-dup').onclick = () => { const [row, i] = find(sel); if (!row) return; const c = {...row[i], id:seq++}; row.splice(i + 1, 0, c); all(); openSheet(c.id) };
+$('sh-del').onclick = () => { const [row, i] = find(sel); if (!row) return; row.splice(i, 1); closeSheet(); all() };
+
+/* ---------- підписати разом ---------- */
+$('bulkgo').onclick = () => { const names = $('bulk').value.split(/[,;\n]| далі | потім | наступний | наступна /i).map(x => x.trim()).filter(Boolean); if (!names.length) return; const only = $('bulkempty').checked; let k = 0, n = 0;
+  for (const row of S.rows.slice(0, S.rowsN)) for (const d of row){ if (k >= names.length) break; if (d.t === 'blank') continue; if (only && d.n) continue; let x = names[k++]; x = x.replace(/^(перший|другий|третій|четвертий|п.ятий|шостий|сьомий)\s*(—|-|:)?\s*/i, ''); d.n = x[0].toUpperCase() + x.slice(1); n++ }
+  $('railmsg').textContent = 'Підписано апаратів: ' + n + (k < names.length ? '. Назв більше, ніж вільних місць: ' + (names.length - k) + ' зайві.' : '.'); all() };
+{ const SR = window.SpeechRecognition || window.webkitSpeechRecognition, mic = $('mic'); if (SR){ mic.hidden = false; let rec = null;
+  mic.onclick = () => { if (rec){ rec.stop(); return } rec = new SR(); rec.lang = 'uk-UA'; rec.interimResults = true; rec.continuous = true; const base = $('bulk').value ? $('bulk').value.trim().replace(/,?$/, ', ') : '';
+    rec.onresult = e => { let t = ''; for (const x of e.results) t += x[0].transcript + ', '; $('bulk').value = base + t.replace(/,\s*$/, '') }; rec.onend = () => { rec = null; mic.classList.remove('rec'); mic.textContent = '🎤 Диктувати' }; rec.onerror = () => {};
+    try{ rec.start(); mic.classList.add('rec'); mic.textContent = '■ Стоп' }catch(e){ rec = null } } } }
+
+/* ---------- теми ---------- */
+function renderThemes(){ const box = $('themes'); box.replaceChildren(); for (const [k, n, dsc] of THEMES){ const b = el('button', 'theme'); b.type = 'button'; b.setAttribute('aria-pressed', S.theme === k); const mini = el('div', 'mini'); mini.innerHTML = stripHTML([{id:1, t:'rcd', n:'ПЗВ', r:'40 A', w:2}, {id:2, t:'mcb', n:'Кухня', r:'C16', w:1}, {id:3, t:'mcb', n:'Світло', r:'B10', w:1}], {1:1, 2:1, 3:2}, {}, 9, 8.6, k, true); b.append(mini, el('span', 'tn', n), el('span', 'td', dsc)); b.onclick = () => { S.theme = k; all() }; box.append(b) }
+  $('brandbox').classList.toggle('hide', S.theme !== 'brand') }
+
+/* ---------- наклейки ---------- */
+const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;'})[c]);
+function cellHTML(d, gc, ds, pw, h, theme, mini){ const W = d.w * pw, fs = +S.fs || 1, showIco = S.ico && d.t !== 'blank' && theme !== 'minimal', big = theme === 'icons', name = d.t === 'blank' ? '' : (d.n || ''), rate = S.rate && theme !== 'minimal' ? (d.r || '') : '';
+  const icoH = showIco ? Math.min(h * (big ? .5 : .34), W * .7) : 0, lines = Math.max(1, Math.min(3, Math.ceil((name.length || 1) * h * .19 / Math.max(W - 1, 1) * fs))), room = h - icoH - (rate ? h * .18 : 0) - 1.2;
+  let nfs = Math.min(h * (theme === 'contrast' ? .3 : .25), room / lines / 1.08) * fs; nfs = Math.max(1.6, Math.min(nfs, (W - 1) / Math.max(4, Math.min(name.length, 9)) * 1.7));
+  const rfs = Math.max(1.4, Math.min(h * .16, W / Math.max(4, rate.length) * 1.6)) * fs;
+  return `<div class="cell${d.t === 'blank' ? ' blank' : ''}" style="width:${W}mm;--gc:${gc}">` + (S.des && ds && !mini ? `<span class="ds" style="font-size:${Math.max(1.4, h * .12)}mm">${esc(ds)}</span>` : '') + (showIco ? `<span class="ic" style="width:${icoH}mm;height:${icoH}mm">${svg(icoOf(d))}</span>` : '') + (name ? `<span class="nm" style="font-size:${nfs.toFixed(2)}mm">${esc(name)}</span>` : '') + (rate ? `<span class="rt" style="font-size:${rfs.toFixed(2)}mm">${esc(rate)}</span>` : '') + '</div>' }
+function stripHTML(devs, G, D, pw, h, theme, mini, extra){ return `<div class="strip t-${theme}" style="height:${h}mm">` + devs.map(d => cellHTML(d, GC[G[d.id] || 0], D[d.id], pw, h, theme, mini)).join('') + (extra || '') + '</div>' }
+function strips(maxMm){ const G = groups(), D = desig(), pw = +S.pitch, h = +S.h, out = [], cap = Math.floor(maxMm / pw);
+  S.rows.slice(0, S.rowsN).forEach((row, ri) => { if (!row.length) return; let part = [], w = 0, k = 1; const split = used(row) > cap; const flush = () => {
+      out.push({title:'Ряд ' + (ri + 1) + (split ? ', частина ' + k : ''), html:stripHTML(part, G, D, pw, h, S.theme, false, ''), mm:part.reduce((s, d) => s + d.w, 0) * pw}); part = []; w = 0; k++ };
+    for (const d of row){ if (w + d.w > cap && part.length) flush(); part.push(d); w += d.w } if (part.length) flush() });
+  if (S.theme === 'brand' && (S.bname || S.btel) && out.length){ const bw = Math.min(cap, 3) * pw; out.push({title:'Візитка на дверцята або вільне місце', html:`<div class="strip t-brand" style="height:${h}mm"><div class="cell brandtag" style="width:${bw}mm"><span class="nm" style="font-size:${Math.min(h * .2, 2.8)}mm">${esc(S.bname)}</span><span class="rt" style="font-size:${Math.min(h * .17, 2.4)}mm">${esc(S.btel)}</span></div></div>`, mm:bw}) }
+  return out }
+function renderPreview(){ const box = $('preview'); box.replaceChildren(); for (const s of strips(1000)){ box.append(el('p', 'no', s.title)); const wrap = el('div'); wrap.innerHTML = s.html; wrap.style.transformOrigin = '0 0'; box.append(wrap) } if (!box.children.length) box.append(el('p', 'note', 'Додай апарати на рейку, і тут з\'являться наклейки.')) }
+
+/* ---------- друк і PNG ---------- */
+function gate(what){ if (window.DR && DR.active && DR.active()) return true; if (window.DR && DR.paywall){ DR.paywall(what + ' — у підписці «Дінрейка». Найпростіше: тариф «Тиждень» за 50 грн або промокод.'); return false } return true }
+function cssBlock(){ let t = ''; for (const r of document.styleSheets) try{ for (const x of r.cssRules) if (/\.strip|\.cell|\.t-/.test(x.selectorText || '')) t += x.cssText + '\n' }catch(e){} return t }
+function printDoc(){ const S2 = strips(185); return `<!doctype html><html lang="uk"><head><meta charset="utf-8"><title>Наклейки — ${esc(S.name || 'щит')}</title><style>@page{size:A4;margin:10mm}body{margin:0;font-family:Arial,sans-serif;color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact}h1{font-size:12pt;margin:0 0 2mm}p.no{font-size:8pt;margin:4mm 0 1mm;color:#555}.cut{font-size:7pt;color:#777;margin:0 0 3mm}
+  .ruler{width:100mm;height:3mm;border:0.2mm solid #000;border-top:0;margin-top:6mm;font-size:7pt;position:relative}.ruler span{position:absolute;right:0;top:3.2mm}\n${cssBlock()}</style></head><body><h1>Наклейки на щиток${S.name ? ': ' + esc(S.name) : ''}</h1><p class="cut">Крок модуля ${String(S.pitch).replace('.', ',')} мм, висота ${S.h} мм. Ріж по пунктиру. Перевір масштаб лінійкою внизу: 100 мм.</p>` + S2.map(s => `<p class="no">${s.title}</p>${s.html}`).join('') + '<div class="ruler"><span>100 мм</span></div></body></html>' }
+$('print').onclick = () => { if (!gate('Друк наклейок')) return; const old = $('pf'); if (old) old.remove(); const f = el('iframe'); f.id = 'pf'; f.title = 'Друк'; f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0'; f.srcdoc = printDoc(); f.onload = () => { try{ f.contentWindow.focus(); f.contentWindow.print(); $('outmsg').textContent = 'Відкрилось вікно друку: постав масштаб 100 %.' }catch(e){ $('outmsg').textContent = 'Браузер не дав відкрити друк.' } }; document.body.append(f) };
+const TAPE = {'brother-12':{dpi:180, h:9, max:180, n:'безперервна стрічка 12 мм'}, 'brother-18':{dpi:180, h:15, max:180, n:'безперервна стрічка 18 мм'}, 'niimbot-1240':{dpi:203, h:12, max:40, n:'Niimbot, етикетки 12×40 мм'}, 'niimbot-1550':{dpi:203, h:15, max:50, n:'Niimbot, етикетки 15×50 мм'}};
+$('png').onclick = async () => { if (!gate('Наклейки для принтера етикеток')) return; const T = TAPE[$('tape').value], keep = S.h; S.h = String(T.h); const list = strips(T.max); S.h = keep; const css = cssBlock(); let n = 0;
+  for (const s of list){ const pxmm = T.dpi / 25.4, Wmm = s.mm + 0.6, W = Math.round(Wmm * pxmm) + 4, H = Math.round(T.h * pxmm);
+    const doc = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="transform:scale(${pxmm / 3.7795});transform-origin:0 0"><style>${css}</style>${s.html}</div></foreignObject></svg>`;
+    try{ const img = new Image(); img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(doc); await img.decode(); const c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, W, H); x.drawImage(img, 0, 0);
+      const blob = await new Promise(r => c.toBlob(r, 'image/png')); const a = el('a'); a.href = URL.createObjectURL(blob); a.download = 'nakleiky-' + s.title.replace(/[^0-9a-zа-яіїєґ]+/gi, '-').toLowerCase() + '.png'; document.body.append(a); a.click(); a.remove(); n++ }catch(e){ $('outmsg').textContent = 'Не вдалося зробити PNG у цьому браузері. Спробуй Chrome або друк на A4.'; return } }
+  $('outmsg').textContent = 'Завантажено файлів: ' + n + ' (' + T.n + '). ' + (T.max < 100 ? 'Кожен файл — одна етикетка на 2 модулі: друкуй по черзі в застосунку Niimbot і клей зліва направо.' : 'Відкрий файли в застосунку принтера й друкуй по одному на ряд.') };
+
+/* ---------- налаштування ---------- */
+const bind = (id, key, num) => { const e = $(id); e.value = String(S[key]); e.onchange = e.oninput = () => { S[key] = num ? +e.value : e.value; all() } };
+bind('rows', 'rowsN', true); bind('mods', 'mods', true); bind('pitch', 'pitch'); bind('hgt', 'h'); bind('fs', 'fs'); bind('b-name', 'bname'); bind('b-tel', 'btel');
+$('name').value = S.name; $('name').oninput = () => { S.name = $('name').value; save() };
+for (const [id, k] of [['o-ico', 'ico'], ['o-rate', 'rate'], ['o-des', 'des']]){ $(id).checked = !!S[k]; $(id).onchange = () => { S[k] = $(id).checked; all() } }
+function all(soft){ save(); if (!soft) renderRails(); renderThemes(); renderPreview() }
+all();
+})();
+</script>
+</body>
+</html>
